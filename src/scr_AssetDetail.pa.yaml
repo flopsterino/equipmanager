@@ -201,7 +201,15 @@ Screens:
                           =With(
                               {
                                   req: Coalesce(varCurrentAsset.CommissioningRequired.Value, "None"),
-                                  done: Concat(varCurrentAsset.CommissioningDone, Value, " | ")
+                                  // "None" in the done list says the same thing as an empty list: nothing
+                                  // has been commissioned. Dropping it makes the two spellings of that one
+                                  // state behave alike, instead of one reading as "something was done,
+                                  // but not this".
+                                  done: Concat(
+                                      Filter(varCurrentAsset.CommissioningDone, Value <> "None"),
+                                      Value,
+                                      " | "
+                                  )
                               },
                               If(
                                   req = "None",                       RGBA(27, 94, 52, 1),
@@ -230,7 +238,15 @@ Screens:
                           =With(
                               {
                                   req: Coalesce(varCurrentAsset.CommissioningRequired.Value, "None"),
-                                  done: Concat(varCurrentAsset.CommissioningDone, Value, " | ")
+                                  // "None" in the done list says the same thing as an empty list: nothing
+                                  // has been commissioned. Dropping it makes the two spellings of that one
+                                  // state behave alike, instead of one reading as "something was done,
+                                  // but not this".
+                                  done: Concat(
+                                      Filter(varCurrentAsset.CommissioningDone, Value <> "None"),
+                                      Value,
+                                      " | "
+                                  )
                               },
                               If(
                                   req = "None",                       "Not required",

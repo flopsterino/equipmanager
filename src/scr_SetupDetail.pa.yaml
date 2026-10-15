@@ -286,7 +286,7 @@ Screens:
                   Height: =Parent.Height
                   LayoutAlignItems: =LayoutAlignItems.Center
                   LayoutDirection: =LayoutDirection.Vertical
-                  LayoutGap: =8
+                  LayoutGap: =16
                   LayoutMinHeight: =16
                   LayoutMinWidth: =16
                   LayoutOverflowY: =LayoutOverflow.Scroll
@@ -305,7 +305,7 @@ Screens:
                         Fill: =RGBA(238, 241, 246, 1)
                         Font: =Font.'Segoe UI'
                         FontWeight: =FontWeight.Semibold
-                        Height: =26
+                        Height: =32
                         LayoutMinHeight: =16
                         LayoutMinWidth: =16
                         PaddingBottom: =0
@@ -324,12 +324,12 @@ Screens:
                         BorderColor: =RGBA(238, 241, 246, 1)
                         Fill: =RGBA(255, 255, 255, 1)
                         FillPortions: =0
-                        Height: =CountRows(varSetupFields) * 34
+                        Height: =CountRows(varSetupFields) * 44
                         Items: =varSetupFields
                         LayoutMinHeight: =16
                         LayoutMinWidth: =16
                         ShowScrollbar: =false
-                        TemplateSize: =34
+                        TemplateSize: =44
                         Width: =Parent.Width - 16
                       Children:
                         - lblSetupFieldName:
@@ -340,7 +340,7 @@ Screens:
                               DisabledColor: =RGBA(139, 148, 163, 1)
                               Font: =Font.'Segoe UI'
                               FontWeight: =If(ThisItem.IsSelected, FontWeight.Semibold, FontWeight.Normal)
-                              Height: =30
+                              Height: =44
                               OnSelect: =Select(Parent)
                               PaddingBottom: =0
                               PaddingLeft: =8
@@ -358,7 +358,7 @@ Screens:
                               DisabledColor: =RGBA(139, 148, 163, 1)
                               Font: =Font.'Segoe UI'
                               FontWeight: =FontWeight.Semibold
-                              Height: =30
+                              Height: =44
                               OnSelect: =Select(Parent)
                               PaddingBottom: =0
                               PaddingLeft: =8
@@ -388,7 +388,7 @@ Screens:
                         Fill: =RGBA(238, 241, 246, 1)
                         Font: =Font.'Segoe UI'
                         FontWeight: =FontWeight.Semibold
-                        Height: =26
+                        Height: =32
                         LayoutMinHeight: =16
                         LayoutMinWidth: =16
                         PaddingBottom: =0
@@ -419,7 +419,7 @@ Screens:
                                   Filter(Equipment_Assets, varCurrentSetup.Titel in Setups.Value)
                               ),
                               1
-                          ) * If(Parent.Width < 600, 94, 56)
+                          ) * If(Parent.Width < 600, 94, 66)
                         Items: |-
                           =Filter(
                               Equipment_Assets,
@@ -428,7 +428,7 @@ Screens:
                         LayoutMinHeight: =16
                         LayoutMinWidth: =16
                         ShowScrollbar: =false
-                        TemplateSize: =If(Parent.Width < 600, 94, 56)
+                        TemplateSize: =If(Parent.Width < 600, 94, 66)
                         Width: =Parent.Width - 16
                       Children:
                         - lblSetupAssetTitle:
@@ -595,7 +595,7 @@ Screens:
                               DisabledColor: =RGBA(139, 148, 163, 1)
                               Font: =Font.'Segoe UI'
                               FontWeight: =FontWeight.Semibold
-                              Height: =22
+                              Height: =32
                               LayoutMinHeight: =16
                               LayoutMinWidth: =16
                               PaddingBottom: =0
@@ -734,7 +734,7 @@ Screens:
                                 )
                               LayoutMinHeight: =16
                               LayoutMinWidth: =16
-                              TemplateSize: =If(Parent.Width < 600, 84, 66)
+                              TemplateSize: =If(Parent.Width < 600, 84, 72)
                               Visible: =!IsBlank(txtSetupAddSearch.Text)
                               Width: =Parent.Width
                             Children:
@@ -906,7 +906,7 @@ Screens:
                         Fill: =RGBA(238, 241, 246, 1)
                         Font: =Font.'Segoe UI'
                         FontWeight: =FontWeight.Semibold
-                        Height: =26
+                        Height: =32
                         LayoutMinHeight: =16
                         LayoutMinWidth: =16
                         PaddingBottom: =0
@@ -971,7 +971,7 @@ Screens:
                                   )
                               ),
                               1
-                          ) * 40
+                          ) * 48
                         Items: |-
                           =Filter(
                               Setup_Documents,
@@ -982,7 +982,7 @@ Screens:
                         LayoutMinHeight: =16
                         LayoutMinWidth: =16
                         ShowScrollbar: =false
-                        TemplateSize: =40
+                        TemplateSize: =48
                         Width: =Parent.Width - 16
                       Children:
                         - lblSetupDocName:
@@ -993,7 +993,7 @@ Screens:
                               DisabledColor: =RGBA(139, 148, 163, 1)
                               Font: =Font.'Segoe UI'
                               FontWeight: =If(ThisItem.IsSelected, FontWeight.Semibold, FontWeight.Normal)
-                              Height: =34
+                              Height: =48
                               OnSelect: =Launch(ThisItem.'{Link}')
                               PaddingBottom: =0
                               PaddingLeft: =8
@@ -1014,7 +1014,7 @@ Screens:
                               DisabledColor: =RGBA(139, 148, 163, 1)
                               Font: =Font.'Segoe UI'
                               FontWeight: =If(ThisItem.IsSelected, FontWeight.Semibold, FontWeight.Normal)
-                              Height: =34
+                              Height: =48
                               OnSelect: =Launch(ThisItem.'{Link}')
                               PaddingBottom: =0
                               PaddingLeft: =12

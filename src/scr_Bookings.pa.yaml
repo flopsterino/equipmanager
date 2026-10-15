@@ -349,7 +349,7 @@ Screens:
                                 )
                               LayoutMinHeight: =16
                               LayoutMinWidth: =16
-                              TemplateSize: =If(Parent.Width < 600, 84, 66)
+                              TemplateSize: =If(Parent.Width < 600, 84, 72)
                               Visible: =!IsBlank(txtBkDeviceSearch.Text)
                               Width: =Parent.Width
                             Children:

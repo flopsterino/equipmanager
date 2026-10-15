@@ -117,7 +117,7 @@ Screens:
                   AlignInContainer: =AlignInContainer.SetByContainer
                   Height: =Parent.Height
                   LayoutDirection: =LayoutDirection.Horizontal
-                  LayoutGap: =12
+                  LayoutGap: =14
                   LayoutMinHeight: =16
                   LayoutMinWidth: =16
                   LayoutOverflowY: =LayoutOverflow.Scroll
@@ -398,7 +398,7 @@ Screens:
                                 )
                               LayoutMinHeight: =16
                               LayoutMinWidth: =16
-                              TemplateSize: =If(Parent.Width < 600, 84, 66)
+                              TemplateSize: =If(Parent.Width < 600, 84, 72)
                               Visible: =!IsBlank(txtBkAssetSearch.Text)
                               Width: =Parent.Width
                             Children:
@@ -852,7 +852,7 @@ Screens:
                           )
                         LayoutMinHeight: =16
                         LayoutMinWidth: =16
-                        TemplateSize: =36
+                        TemplateSize: =44
                         Width: =Parent.Width - 28
                       Children:
                         - lblConflictLine:
@@ -863,7 +863,7 @@ Screens:
                               DisabledColor: =RGBA(139, 148, 163, 1)
                               Font: =Font.'Segoe UI'
                               FontWeight: =If(ThisItem.IsSelected, FontWeight.Semibold, FontWeight.Normal)
-                              Height: =32
+                              Height: =44
                               OnSelect: =Select(Parent)
                               PaddingBottom: =0
                               PaddingLeft: =8

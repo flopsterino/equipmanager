@@ -132,7 +132,7 @@ Screens:
                   AlignInContainer: =AlignInContainer.SetByContainer
                   Height: =Parent.Height
                   LayoutDirection: =LayoutDirection.Horizontal
-                  LayoutGap: =12
+                  LayoutGap: =14
                   LayoutMinHeight: =16
                   LayoutMinWidth: =16
                   LayoutOverflowY: =LayoutOverflow.Scroll

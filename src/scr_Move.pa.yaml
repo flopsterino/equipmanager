@@ -831,7 +831,7 @@ Screens:
                     )
                   LayoutMinHeight: =16
                   LayoutMinWidth: =16
-                  TemplateSize: =If(Parent.Width < 600, 74, 56)
+                  TemplateSize: =If(Parent.Width < 600, 74, 64)
                   Width: =Parent.Width - 16
                 Children:
                   - lblSetupResultTitle:
@@ -1040,7 +1040,7 @@ Screens:
                     )
                   LayoutMinHeight: =16
                   LayoutMinWidth: =16
-                  TemplateSize: =If(Parent.Width < 600, 74, 56)
+                  TemplateSize: =If(Parent.Width < 600, 74, 64)
                   Width: =Parent.Width - 16
                 Children:
                   - lblAssetResultTitle:

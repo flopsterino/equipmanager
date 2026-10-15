@@ -23,6 +23,10 @@ Screens:
             Height: =Parent.Height
             LayoutAlignItems: =LayoutAlignItems.Center
             LayoutDirection: =LayoutDirection.Vertical
+            # The page scrolls. With Hide, whatever did not fit was simply cut off: on a
+            # phone the filters and the month header take 866px before the calendar is
+            # done, so two weeks showed and the day list never did.
+            LayoutOverflowY: =LayoutOverflow.Scroll
             PaddingBottom: =8
             PaddingLeft: =8
             PaddingRight: =8
@@ -468,7 +472,7 @@ Screens:
                   AlignInContainer: =AlignInContainer.SetByContainer
                   FillPortions: =0
                   Height: |-
-                    =18 + 8 + RoundUp(
+                    =18 + 14 + RoundUp(
                         CountRows(Choices(Equipment_Assets.OwnerGroup)) / If(Parent.Width < 600, 2, 4),
                         0
                     ) * 38
@@ -518,6 +522,7 @@ Screens:
                         Items: =Sort(Choices(Equipment_Assets.OwnerGroup), Value)
                         LayoutMinHeight: =16
                         LayoutMinWidth: =16
+                        ShowScrollbar: =false
                         TemplateSize: =38
                         Width: =Parent.Width
                         WrapCount: =If(Parent.Width < 600, 2, 4)
@@ -889,12 +894,10 @@ Screens:
                             Sequence(42) As s,
                             With(
                                 { d: DateAdd(first, s.Value - 1, TimeUnit.Days) },
-                                {
-                                    CellDate: d,
-                                    DayNum: Day(d),
-                                    InMonth: Month(d) = Month(varCalMonth),
-                                    Bookings: CountRows(
-                                        Filter(
+                                With(
+                                    {
+                                        // The day's bookings, filtered once, then counted and named.
+                                        list: Filter(
                                             Equipment_Bookings As bk,
                                             bk.StartDate <= d,
                                             bk.EndDate >= d,
@@ -904,8 +907,24 @@ Screens:
                                                 || LookUp(Equipment_Assets, Titel = bk.Title).OwnerGroup.Value in colGroupFilter.Value
                                                 || LookUp(Equipment_Assets, Titel = bk.Title).UserGroup.Value in colGroupFilter.Value
                                         )
-                                    )
-                                }
+                                    },
+                                    {
+                                        CellDate: d,
+                                        DayNum: Day(d),
+                                        InMonth: Month(d) = Month(varCalMonth),
+                                        Bookings: CountRows(list),
+                                        // What is booked, by device name - nobody knows the asset IDs by
+                                        // heart. One name and a count of the rest; a cell has one line.
+                                        Summary: If(
+                                            CountRows(list) = 0,
+                                            "",
+                                            Coalesce(
+                                                LookUp(Equipment_Assets, Titel = First(list).Title).DeviceName,
+                                                First(list).Title
+                                            ) & If(CountRows(list) > 1, "  +" & (CountRows(list) - 1), "")
+                                        )
+                                    }
+                                )
                             )
                         )
                     )
@@ -981,14 +1000,23 @@ Screens:
                         DisabledColor: =RGBA(139, 148, 163, 1)
                         Font: =Font.'Segoe UI'
                         FontWeight: =FontWeight.Semibold
-                        Height: =16
+                        Height: =18
                         OnSelect: =Set(varCalDay, ThisItem.CellDate)
                         PaddingBottom: =0
-                        PaddingLeft: =12
-                        PaddingRight: =0
+                        PaddingLeft: =If(Parent.TemplateWidth < 110, 12, 6)
+                        PaddingRight: =6
                         PaddingTop: =0
-                        Size: =9
-                        Text: =If(ThisItem.Bookings = 0, "", ThisItem.Bookings & "x")
+                        Size: =If(Parent.TemplateWidth < 110, 9, 10)
+                        # A count on a phone, where a cell is about 50px wide; the device itself on a
+                        # desktop, where "1x" told you something was booked but not what.
+                        Text: |-
+                          =If(
+                              ThisItem.Bookings = 0,
+                              "",
+                              Parent.TemplateWidth < 110,
+                              ThisItem.Bookings & "x",
+                              ThisItem.Summary
+                          )
                         Visible: =ThisItem.Bookings > 0
                         Width: =Parent.TemplateWidth
                         Wrap: =false
@@ -1029,7 +1057,24 @@ Screens:
                   AlignInContainer: =AlignInContainer.SetByContainer
                   BorderColor: =RGBA(238, 241, 246, 1)
                   Fill: =RGBA(255, 255, 255, 1)
-                  Height: =Parent.Height
+                  FillPortions: =0
+                  # As tall as the day has bookings. It used to take whatever space was left
+                  # below the calendar, which on most screens is none - the list was there, one
+                  # sliver high. The filter repeats Items on purpose: a gallery that reads its
+                  # own row count in its own Height gets a blank instead.
+                  Height: |-
+                    =CountRows(
+                        Filter(
+                            Equipment_Bookings As bk,
+                            bk.StartDate <= varCalDay,
+                            bk.EndDate >= varCalDay,
+                            IsBlank(varBookingDevice)
+                                || bk.Title = varBookingDevice,
+                            IsEmpty(colGroupFilter)
+                                || LookUp(Equipment_Assets, Titel = bk.Title).OwnerGroup.Value in colGroupFilter.Value
+                                || LookUp(Equipment_Assets, Titel = bk.Title).UserGroup.Value in colGroupFilter.Value
+                        )
+                    ) * If(Parent.Width < 600, 76, 60)
                   Items: |-
                     =Sort(
                         Filter(
@@ -1181,7 +1226,26 @@ Screens:
                   AlignInContainer: =AlignInContainer.SetByContainer
                   BorderColor: =RGBA(238, 241, 246, 1)
                   Fill: =RGBA(255, 255, 255, 1)
-                  Height: =Parent.Height
+                  FillPortions: =0
+                  # As tall as its bookings, now that the page itself scrolls - a list that
+                  # scrolls inside a page that scrolls is two scrollbars fighting over one thumb.
+                  Height: |-
+                    =CountRows(
+                        Filter(
+                            Equipment_Bookings As bk,
+                            IsBlank(varBookingDevice)
+                                || bk.Title = varBookingDevice,
+                            IsEmpty(colGroupFilter)
+                                || LookUp(Equipment_Assets, Titel = bk.Title).OwnerGroup.Value
+                                    in colGroupFilter.Value
+                                || LookUp(Equipment_Assets, Titel = bk.Title).UserGroup.Value
+                                    in colGroupFilter.Value,
+                            drpBookingFilter.Selected.Value = "All"
+                                || (drpBookingFilter.Selected.Value = "Current and upcoming" && bk.EndDate >= Today())
+                                || (drpBookingFilter.Selected.Value = "My bookings only"
+                                    && bk.ReservedBy.Email = User().Email)
+                        )
+                    ) * If(Parent.Width < 600, 104, 68)
                   Items: |-
                     =Sort(
                         Filter(

@@ -71,3 +71,24 @@ def set_prop(path, control, prop, value, comment=None):
     lines[at:at] = block
     open(path, 'w').write('\n'.join(lines))
     return 'inserted'
+
+
+def put(path, control, prop, formula, comment=None):
+    """Set a multi-line formula, indenting it to wherever the property sits.
+
+    A block scalar's body has to sit deeper than its key, and how deep the key is
+    depends on how far down the control tree it lives. Hard-coding that indent is
+    how a formula ends up outside its own property and the file stops parsing.
+    """
+    import yaml
+    lines = open(path).read().split('\n')
+    ci, cind = _control(lines, control)
+    _, _, pind = _props(lines, ci, cind)
+    body = formula.strip('\n')
+    if '\n' not in body:
+        set_prop(path, control, prop, body, comment)
+    else:
+        ind = ' ' * (pind + 2)
+        block = '|-\n' + '\n'.join((ind + l) if l.strip() else '' for l in body.split('\n'))
+        set_prop(path, control, prop, block, comment)
+    yaml.safe_load(open(path))          # fail here, not three edits later

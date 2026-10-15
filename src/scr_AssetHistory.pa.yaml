@@ -183,7 +183,8 @@ Screens:
                         Icon: =Icon.BackArrow
                         LayoutMinHeight: =16
                         LayoutMinWidth: =16
-                        OnSelect: =Back(ScreenTransition.Fade)
+                        # The history is only reached from the asset, so it returns there by name.
+                        OnSelect: =Navigate(scr_AssetDetail, ScreenTransition.Fade)
                         PressedBorderColor: =RGBA(0, 0, 0, 0)
                         PressedColor: =RGBA(10, 74, 147, 1)
                         PressedFill: =RGBA(0, 0, 0, 0)

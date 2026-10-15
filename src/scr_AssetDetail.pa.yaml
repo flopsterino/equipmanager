@@ -98,7 +98,16 @@ Screens:
                         Icon: =Icon.BackArrow
                         LayoutMinHeight: =16
                         LayoutMinWidth: =16
-                        OnSelect: =Back(ScreenTransition.Fade)
+                        # Back() returns to the screen shown before this one. After saving an edit
+                        # that is the edit screen, so back led straight back into editing. This
+                        # goes to where the asset was opened from instead: the setup it belongs
+                        # to, or the overview.
+                        OnSelect: |-
+                          =If(
+                              varAssetFromSetup,
+                              Navigate(scr_SetupDetail, ScreenTransition.Fade),
+                              Navigate(scr_Home, ScreenTransition.Fade)
+                          )
                         PressedBorderColor: =RGBA(0, 0, 0, 0)
                         PressedColor: =RGBA(10, 74, 147, 1)
                         PressedFill: =RGBA(0, 0, 0, 0)

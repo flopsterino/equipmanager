@@ -120,6 +120,7 @@ Screens:
                           If(
                               !IsBlank(varScanAsset.'Id (ID)'),
                               Set(varCurrentAsset, varScanAsset);
+                              Set(varAssetFromSetup, false);
                               Navigate(scr_AssetDetail, ScreenTransition.Fade),
                               !IsBlank(varScanSetup.'Id (ID)'),
                               Set(varCurrentSetup, varScanSetup);
@@ -798,6 +799,7 @@ Screens:
                               Height: =Parent.TemplateHeight - 9
                               OnSelect: |-
                                 =Set(varCurrentAsset, ThisItem);
+                                Set(varAssetFromSetup, false);
                                 Navigate(scr_AssetDetail, ScreenTransition.Fade)
                               Visible: =ThisItem.IsSelected
                               Width: =4
@@ -813,6 +815,7 @@ Screens:
                               Height: =If(Parent.TemplateWidth < 600, 38, 24)
                               OnSelect: |-
                                 =Set(varCurrentAsset, ThisItem);
+                                Set(varAssetFromSetup, false);
                                 Navigate(scr_AssetDetail, ScreenTransition.Fade)
                               PaddingBottom: =0
                               PaddingLeft: =8
@@ -839,6 +842,7 @@ Screens:
                               Height: =20
                               OnSelect: |-
                                 =Set(varCurrentAsset, ThisItem);
+                                Set(varAssetFromSetup, false);
                                 Navigate(scr_AssetDetail, ScreenTransition.Fade)
                               PaddingBottom: =0
                               PaddingLeft: =8
@@ -868,6 +872,7 @@ Screens:
                               Height: =18
                               OnSelect: |-
                                 =Set(varCurrentAsset, ThisItem);
+                                Set(varAssetFromSetup, false);
                                 Navigate(scr_AssetDetail, ScreenTransition.Fade)
                               PaddingBottom: =0
                               PaddingLeft: =8
@@ -900,6 +905,7 @@ Screens:
                               Height: =24
                               OnSelect: |-
                                 =Set(varCurrentAsset, ThisItem);
+                                Set(varAssetFromSetup, false);
                                 Navigate(scr_AssetDetail, ScreenTransition.Fade)
                               PaddingBottom: =0
                               PaddingLeft: =12
@@ -939,6 +945,7 @@ Screens:
                               Icon: =Icon.ChevronRight
                               OnSelect: |-
                                 =Set(varCurrentAsset, ThisItem);
+                                Set(varAssetFromSetup, false);
                                 Navigate(scr_AssetDetail, ScreenTransition.Fade)
                               PressedBorderColor: =RGBA(0, 0, 0, 0)
                               PressedColor: =RGBA(10, 74, 147, 1)
@@ -956,6 +963,7 @@ Screens:
                               Height: =1
                               OnSelect: |-
                                 =Set(varCurrentAsset, ThisItem);
+                                Set(varAssetFromSetup, false);
                                 Navigate(scr_AssetDetail, ScreenTransition.Fade)
                               Visible: =ThisItem.IsSelected
                               Width: =Parent.TemplateWidth

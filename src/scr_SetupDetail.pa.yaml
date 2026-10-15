@@ -82,7 +82,9 @@ Screens:
                         Icon: =Icon.BackArrow
                         LayoutMinHeight: =16
                         LayoutMinWidth: =16
-                        OnSelect: =Back(ScreenTransition.Fade)
+                        # A setup is only ever opened from the overview, so back goes there - and
+                        # never to the edit screen a save has just left behind.
+                        OnSelect: =Navigate(scr_Home, ScreenTransition.Fade)
                         PressedBorderColor: =RGBA(0, 0, 0, 0)
                         PressedColor: =RGBA(10, 74, 147, 1)
                         PressedFill: =RGBA(0, 0, 0, 0)
@@ -442,6 +444,7 @@ Screens:
                               Height: =If(Parent.TemplateWidth < 600, 62, 22)
                               OnSelect: |-
                                 =Set(varCurrentAsset, ThisItem);
+                                Set(varAssetFromSetup, true);
                                 Navigate(scr_AssetDetail, ScreenTransition.Fade)
                               PaddingBottom: =0
                               PaddingLeft: =8
@@ -468,6 +471,7 @@ Screens:
                               Height: =20
                               OnSelect: |-
                                 =Set(varCurrentAsset, ThisItem);
+                                Set(varAssetFromSetup, true);
                                 Navigate(scr_AssetDetail, ScreenTransition.Fade)
                               PaddingBottom: =0
                               PaddingLeft: =8
@@ -522,6 +526,7 @@ Screens:
                               Icon: =Icon.ChevronRight
                               OnSelect: |-
                                 =Set(varCurrentAsset, ThisItem);
+                                Set(varAssetFromSetup, true);
                                 Navigate(scr_AssetDetail, ScreenTransition.Fade)
                               PressedBorderColor: =RGBA(0, 0, 0, 0)
                               PressedColor: =RGBA(10, 74, 147, 1)
@@ -537,6 +542,7 @@ Screens:
                               Height: =1
                               OnSelect: |-
                                 =Set(varCurrentAsset, ThisItem);
+                                Set(varAssetFromSetup, true);
                                 Navigate(scr_AssetDetail, ScreenTransition.Fade)
                               Visible: =ThisItem.IsSelected
                               Width: =Parent.TemplateWidth

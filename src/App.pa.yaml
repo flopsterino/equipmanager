@@ -10,6 +10,9 @@ App:
   Properties:
     OnStart: |-
       =Clear(colMoveBuffer);
+      // Where the asset screen's back arrow should return to. Blank reads as false
+      // anyway, but a variable the app never sets is one nobody can look up.
+      Set(varAssetFromSetup, false);
       // Give colGroupFilter a schema before anything reads colGroupFilter.Value.
       // Collecting one row and clearing it is the plainest way to declare the
       // shape without leaving a row behind.

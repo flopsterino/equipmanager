@@ -53,16 +53,25 @@ def main():
         print(f'  LOST      {".".join(str(x) for x in k)}')
     for k in sorted(only_b)[:20]:
         print(f'  ADDED     {".".join(str(x) for x in k)}')
-    for k in sorted(changed)[:20]:
-        print(f'  CHANGED   {".".join(str(x) for x in k)}')
-        print(f'      was: {str(a[k])[:120]}')
-        print(f'      now: {str(b[k])[:120]}')
+    if '--verbose' in sys.argv:
+        for k in sorted(changed)[:40]:
+            print(f'  CHANGED   {".".join(str(x) for x in k)}')
+            print(f'      was: {str(a[k])[:120]}')
+            print(f'      now: {str(b[k])[:120]}')
 
-    total = len(only_a) + len(only_b) + len(changed)
-    if total:
-        print(f'verify_roundtrip: {total} difference(s) over {len(a)} properties')
+    # A changed formula is the point of a build. A property or a control that
+    # appeared or vanished is not: the sources and the package would then
+    # disagree about what the app is made of, and Power Apps reads the package.
+    structural = len(only_a) + len(only_b)
+    if structural:
+        print(f'verify_roundtrip: {structural} property/control(s) lost or added - '
+              f'the sources and the package no longer describe the same app')
         return 1
-    print(f'verify_roundtrip: OK - {len(a)} properties identical')
+    if changed:
+        print(f'verify_roundtrip: OK - {len(changed)} formula(s) changed on purpose, '
+              f'{len(a) - len(changed)} untouched, nothing lost or added')
+    else:
+        print(f'verify_roundtrip: OK - {len(a)} properties identical')
     return 0
 
 

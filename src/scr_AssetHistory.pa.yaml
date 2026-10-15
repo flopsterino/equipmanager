@@ -9,8 +9,8 @@
 Screens:
   scr_AssetHistory:
     Properties:
-      Fill: =RGBA(255, 255, 255, 1)
-      LoadingSpinnerColor: =RGBA(0, 120, 212, 1)
+      Fill: RGBA(244, 245, 247, 1)
+      LoadingSpinnerColor: =RGBA(0, 46, 101, 1)
       OnVisible: |-
         =If(IsBlank(varHistFilter), Set(varHistFilter, "All"));
         Clear(colAssetTimeline);
@@ -152,6 +152,7 @@ Screens:
                 Variant: AutoLayout
                 Properties:
                   AlignInContainer: =AlignInContainer.SetByContainer
+                  Fill: =RGBA(255, 255, 255, 1)
                   FillPortions: =0
                   Height: =If(Parent.Width < 600, 104, 100)
                   LayoutAlignItems: =LayoutAlignItems.Center
@@ -170,21 +171,21 @@ Screens:
                       Properties:
                         AccessibleLabel: ="Back to the asset"
                         BorderColor: =RGBA(0, 0, 0, 0)
-                        Color: =RGBA(96, 94, 92, 1)
-                        DisabledBorderColor: =RGBA(245, 245, 245, 1)
+                        Color: =RGBA(90, 101, 119, 1)
+                        DisabledBorderColor: =RGBA(238, 241, 246, 1)
                         DisabledColor: =RGBA(225, 223, 221, 1)
                         DisabledFill: =RGBA(0, 0, 0, 0)
                         FocusedBorderThickness: =4
                         Height: =36
                         HoverBorderColor: =RGBA(0, 0, 0, 0)
-                        HoverColor: =RGBA(16, 110, 190, 1)
+                        HoverColor: =RGBA(10, 74, 147, 1)
                         HoverFill: =RGBA(0, 0, 0, 0)
                         Icon: =Icon.BackArrow
                         LayoutMinHeight: =16
                         LayoutMinWidth: =16
                         OnSelect: =Back(ScreenTransition.Fade)
                         PressedBorderColor: =RGBA(0, 0, 0, 0)
-                        PressedColor: =RGBA(16, 110, 190, 1)
+                        PressedColor: =RGBA(10, 74, 147, 1)
                         PressedFill: =RGBA(0, 0, 0, 0)
                         Tooltip: ="Back"
                         Width: =36
@@ -210,8 +211,8 @@ Screens:
                             Control: Label@2.5.1
                             Properties:
                               BorderColor: =RGBA(0, 0, 0, 1)
-                              Color: =RGBA(50, 49, 48, 1)
-                              DisabledColor: =RGBA(161, 159, 157, 1)
+                              Color: =RGBA(23, 35, 58, 1)
+                              DisabledColor: =RGBA(139, 148, 163, 1)
                               Font: =Font.'Segoe UI'
                               FontWeight: =FontWeight.Semibold
                               Height: =Self.Size * 2.9
@@ -229,8 +230,8 @@ Screens:
                             Control: Label@2.5.1
                             Properties:
                               BorderColor: =RGBA(0, 0, 0, 1)
-                              Color: =RGBA(96, 94, 92, 1)
-                              DisabledColor: =RGBA(161, 159, 157, 1)
+                              Color: =RGBA(90, 101, 119, 1)
+                              DisabledColor: =RGBA(139, 148, 163, 1)
                               Font: =Font.'Segoe UI'
                               Height: =Self.Size * 2.9
                               LayoutMinHeight: =16
@@ -269,25 +270,25 @@ Screens:
                   - btnHistAll:
                       Control: Classic/Button@2.2.0
                       Properties:
-                        BorderColor: =RGBA(0, 120, 212, 1)
+                        BorderColor: =RGBA(0, 46, 101, 1)
                         BorderStyle: =BorderStyle.None
                         BorderThickness: =1
-                        Color: =If(varHistFilter = "All", RGBA(255, 255, 255, 1), RGBA(0, 120, 212, 1))
+                        Color: =If(varHistFilter = "All", RGBA(255, 255, 255, 1), RGBA(0, 46, 101, 1))
                         DisabledBorderColor: =RGBA(0, 0, 0, 0)
-                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        DisabledColor: =RGBA(139, 148, 163, 1)
                         DisabledFill: =RGBA(242, 242, 241, 0)
-                        Fill: =If(varHistFilter = "All", RGBA(0, 120, 212, 1), RGBA(255, 255, 255, 1))
+                        Fill: =If(varHistFilter = "All", RGBA(0, 46, 101, 1), RGBA(255, 255, 255, 1))
                         Font: =Font.'Segoe UI'
                         Height: =32
                         HoverBorderColor: =RGBA(0, 0, 0, 0)
                         HoverColor: =RGBA(255, 255, 255, 1)
-                        HoverFill: =If(varHistFilter = "All", RGBA(16, 110, 190, 1), RGBA(235, 243, 252, 1))
+                        HoverFill: =If(varHistFilter = "All", RGBA(10, 74, 147, 1), RGBA(232, 239, 248, 1))
                         LayoutMinHeight: =16
                         LayoutMinWidth: =16
                         OnSelect: =Set(varHistFilter, "All")
                         PressedBorderColor: =RGBA(0, 69, 120, 1)
                         PressedColor: =RGBA(255, 255, 255, 1)
-                        PressedFill: =RGBA(16, 110, 190, 1)
+                        PressedFill: =RGBA(10, 74, 147, 1)
                         RadiusBottomLeft: =16
                         RadiusBottomRight: =16
                         RadiusTopLeft: =16
@@ -298,25 +299,25 @@ Screens:
                   - btnHistMoves:
                       Control: Classic/Button@2.2.0
                       Properties:
-                        BorderColor: =RGBA(0, 120, 212, 1)
+                        BorderColor: =RGBA(0, 46, 101, 1)
                         BorderStyle: =BorderStyle.None
                         BorderThickness: =1
-                        Color: =If(varHistFilter = "Move", RGBA(255, 255, 255, 1), RGBA(0, 120, 212, 1))
+                        Color: =If(varHistFilter = "Move", RGBA(255, 255, 255, 1), RGBA(0, 46, 101, 1))
                         DisabledBorderColor: =RGBA(0, 0, 0, 0)
-                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        DisabledColor: =RGBA(139, 148, 163, 1)
                         DisabledFill: =RGBA(242, 242, 241, 0)
-                        Fill: =If(varHistFilter = "Move", RGBA(0, 120, 212, 1), RGBA(255, 255, 255, 1))
+                        Fill: =If(varHistFilter = "Move", RGBA(0, 46, 101, 1), RGBA(255, 255, 255, 1))
                         Font: =Font.'Segoe UI'
                         Height: =32
                         HoverBorderColor: =RGBA(0, 0, 0, 0)
                         HoverColor: =RGBA(255, 255, 255, 1)
-                        HoverFill: =If(varHistFilter = "Move", RGBA(16, 110, 190, 1), RGBA(235, 243, 252, 1))
+                        HoverFill: =If(varHistFilter = "Move", RGBA(10, 74, 147, 1), RGBA(232, 239, 248, 1))
                         LayoutMinHeight: =16
                         LayoutMinWidth: =16
                         OnSelect: =Set(varHistFilter, "Move")
                         PressedBorderColor: =RGBA(0, 69, 120, 1)
                         PressedColor: =RGBA(255, 255, 255, 1)
-                        PressedFill: =RGBA(16, 110, 190, 1)
+                        PressedFill: =RGBA(10, 74, 147, 1)
                         RadiusBottomLeft: =16
                         RadiusBottomRight: =16
                         RadiusTopLeft: =16
@@ -327,25 +328,25 @@ Screens:
                   - btnHistIssues:
                       Control: Classic/Button@2.2.0
                       Properties:
-                        BorderColor: =RGBA(0, 120, 212, 1)
+                        BorderColor: =RGBA(0, 46, 101, 1)
                         BorderStyle: =BorderStyle.None
                         BorderThickness: =1
-                        Color: =If(varHistFilter = "Issue", RGBA(255, 255, 255, 1), RGBA(0, 120, 212, 1))
+                        Color: =If(varHistFilter = "Issue", RGBA(255, 255, 255, 1), RGBA(0, 46, 101, 1))
                         DisabledBorderColor: =RGBA(0, 0, 0, 0)
-                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        DisabledColor: =RGBA(139, 148, 163, 1)
                         DisabledFill: =RGBA(242, 242, 241, 0)
-                        Fill: =If(varHistFilter = "Issue", RGBA(0, 120, 212, 1), RGBA(255, 255, 255, 1))
+                        Fill: =If(varHistFilter = "Issue", RGBA(0, 46, 101, 1), RGBA(255, 255, 255, 1))
                         Font: =Font.'Segoe UI'
                         Height: =32
                         HoverBorderColor: =RGBA(0, 0, 0, 0)
                         HoverColor: =RGBA(255, 255, 255, 1)
-                        HoverFill: =If(varHistFilter = "Issue", RGBA(16, 110, 190, 1), RGBA(235, 243, 252, 1))
+                        HoverFill: =If(varHistFilter = "Issue", RGBA(10, 74, 147, 1), RGBA(232, 239, 248, 1))
                         LayoutMinHeight: =16
                         LayoutMinWidth: =16
                         OnSelect: =Set(varHistFilter, "Issue")
                         PressedBorderColor: =RGBA(0, 69, 120, 1)
                         PressedColor: =RGBA(255, 255, 255, 1)
-                        PressedFill: =RGBA(16, 110, 190, 1)
+                        PressedFill: =RGBA(10, 74, 147, 1)
                         RadiusBottomLeft: =16
                         RadiusBottomRight: =16
                         RadiusTopLeft: =16
@@ -356,25 +357,25 @@ Screens:
                   - btnHistBookings:
                       Control: Classic/Button@2.2.0
                       Properties:
-                        BorderColor: =RGBA(0, 120, 212, 1)
+                        BorderColor: =RGBA(0, 46, 101, 1)
                         BorderStyle: =BorderStyle.None
                         BorderThickness: =1
-                        Color: =If(varHistFilter = "Booking", RGBA(255, 255, 255, 1), RGBA(0, 120, 212, 1))
+                        Color: =If(varHistFilter = "Booking", RGBA(255, 255, 255, 1), RGBA(0, 46, 101, 1))
                         DisabledBorderColor: =RGBA(0, 0, 0, 0)
-                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        DisabledColor: =RGBA(139, 148, 163, 1)
                         DisabledFill: =RGBA(242, 242, 241, 0)
-                        Fill: =If(varHistFilter = "Booking", RGBA(0, 120, 212, 1), RGBA(255, 255, 255, 1))
+                        Fill: =If(varHistFilter = "Booking", RGBA(0, 46, 101, 1), RGBA(255, 255, 255, 1))
                         Font: =Font.'Segoe UI'
                         Height: =32
                         HoverBorderColor: =RGBA(0, 0, 0, 0)
                         HoverColor: =RGBA(255, 255, 255, 1)
-                        HoverFill: =If(varHistFilter = "Booking", RGBA(16, 110, 190, 1), RGBA(235, 243, 252, 1))
+                        HoverFill: =If(varHistFilter = "Booking", RGBA(10, 74, 147, 1), RGBA(232, 239, 248, 1))
                         LayoutMinHeight: =16
                         LayoutMinWidth: =16
                         OnSelect: =Set(varHistFilter, "Booking")
                         PressedBorderColor: =RGBA(0, 69, 120, 1)
                         PressedColor: =RGBA(255, 255, 255, 1)
-                        PressedFill: =RGBA(16, 110, 190, 1)
+                        PressedFill: =RGBA(10, 74, 147, 1)
                         RadiusBottomLeft: =16
                         RadiusBottomRight: =16
                         RadiusTopLeft: =16
@@ -387,7 +388,8 @@ Screens:
                 Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
                 Properties:
                   AlignInContainer: =AlignInContainer.SetByContainer
-                  BorderColor: =RGBA(245, 245, 245, 1)
+                  BorderColor: =RGBA(238, 241, 246, 1)
+                  Fill: =RGBA(255, 255, 255, 1)
                   Height: =Parent.Height
                   Items: |-
                     =Sort(
@@ -413,13 +415,13 @@ Screens:
                         Fill: |-
                           =Switch(
                               ThisItem.Kind,
-                              "Move", RGBA(0, 120, 212, 1),
+                              "Move", RGBA(0, 46, 101, 1),
                               "Handover",   RGBA(0, 90, 158, 1),
                               "Issue",      RGBA(196, 89, 17, 1),
-                              "Resolved",     RGBA(16, 124, 16, 1),
+                              "Resolved",     RGBA(27, 94, 52, 1),
                               "Booking",   RGBA(122, 60, 190, 1),
                               "Maintenance",    RGBA(0, 153, 153, 1),
-                              RGBA(161, 159, 157, 1)
+                              RGBA(139, 148, 163, 1)
                           )
                         Height: =Parent.TemplateHeight - 10
                         OnSelect: =Select(Parent)
@@ -434,15 +436,15 @@ Screens:
                         Color: |-
                           =Switch(
                               ThisItem.Kind,
-                              "Move", RGBA(0, 120, 212, 1),
+                              "Move", RGBA(0, 46, 101, 1),
                               "Handover",   RGBA(0, 90, 158, 1),
                               "Issue",      RGBA(196, 89, 17, 1),
-                              "Resolved",     RGBA(16, 124, 16, 1),
+                              "Resolved",     RGBA(27, 94, 52, 1),
                               "Booking",   RGBA(122, 60, 190, 1),
                               "Maintenance",    RGBA(0, 153, 153, 1),
-                              RGBA(96, 94, 92, 1)
+                              RGBA(90, 101, 119, 1)
                           )
-                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        DisabledColor: =RGBA(139, 148, 163, 1)
                         Font: =Font.'Segoe UI'
                         FontWeight: =FontWeight.Semibold
                         Height: =18
@@ -462,8 +464,8 @@ Screens:
                       Properties:
                         Align: =Align.Right
                         BorderColor: =RGBA(0, 0, 0, 1)
-                        Color: =RGBA(161, 159, 157, 1)
-                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        Color: =RGBA(139, 148, 163, 1)
+                        DisabledColor: =RGBA(139, 148, 163, 1)
                         Font: =Font.'Segoe UI'
                         FontWeight: =If(ThisItem.IsSelected, FontWeight.Semibold, FontWeight.Normal)
                         Height: =18
@@ -482,8 +484,8 @@ Screens:
                       Control: Label@2.5.1
                       Properties:
                         BorderColor: =RGBA(0, 0, 0, 1)
-                        Color: =RGBA(50, 49, 48, 1)
-                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        Color: =RGBA(23, 35, 58, 1)
+                        DisabledColor: =RGBA(139, 148, 163, 1)
                         Font: =Font.'Segoe UI'
                         FontWeight: =FontWeight.Semibold
                         Height: =22
@@ -501,8 +503,8 @@ Screens:
                       Control: Label@2.5.1
                       Properties:
                         BorderColor: =RGBA(0, 0, 0, 1)
-                        Color: =RGBA(96, 94, 92, 1)
-                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        Color: =RGBA(90, 101, 119, 1)
+                        DisabledColor: =RGBA(139, 148, 163, 1)
                         Font: =Font.'Segoe UI'
                         FontWeight: =If(ThisItem.IsSelected, FontWeight.Semibold, FontWeight.Normal)
                         Height: =20
@@ -523,7 +525,7 @@ Screens:
                       Control: Rectangle@2.3.0
                       Properties:
                         BorderColor: =RGBA(0, 0, 0, 0)
-                        Fill: =RGBA(240, 240, 240, 1)
+                        Fill: =RGBA(232, 236, 242, 1)
                         Height: =1
                         OnSelect: =Select(Parent)
                         Visible: =ThisItem.IsSelected
@@ -534,8 +536,8 @@ Screens:
                 Properties:
                   Align: =Align.Center
                   BorderColor: =RGBA(0, 0, 0, 1)
-                  Color: =RGBA(161, 159, 157, 1)
-                  DisabledColor: =RGBA(161, 159, 157, 1)
+                  Color: =RGBA(139, 148, 163, 1)
+                  DisabledColor: =RGBA(139, 148, 163, 1)
                   Font: =Font.'Segoe UI'
                   Height: =70
                   LayoutMinHeight: =16

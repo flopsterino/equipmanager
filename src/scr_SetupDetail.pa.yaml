@@ -9,8 +9,8 @@
 Screens:
   scr_SetupDetail:
     Properties:
-      Fill: =RGBA(255, 255, 255, 1)
-      LoadingSpinnerColor: =RGBA(0, 120, 212, 1)
+      Fill: RGBA(244, 245, 247, 1)
+      LoadingSpinnerColor: =RGBA(0, 46, 101, 1)
       OnVisible: |-
         =If(
             !IsBlank(varCurrentSetup.'Id (ID)'),
@@ -51,6 +51,7 @@ Screens:
                 Variant: AutoLayout
                 Properties:
                   AlignInContainer: =AlignInContainer.SetByContainer
+                  Fill: =RGBA(255, 255, 255, 1)
                   FillPortions: =0
                   Height: =If(Parent.Width < 600, 108, 112)
                   LayoutAlignItems: =LayoutAlignItems.Center
@@ -69,21 +70,21 @@ Screens:
                       Properties:
                         AccessibleLabel: ="Back to overview"
                         BorderColor: =RGBA(0, 0, 0, 0)
-                        Color: =RGBA(96, 94, 92, 1)
-                        DisabledBorderColor: =RGBA(245, 245, 245, 1)
+                        Color: =RGBA(90, 101, 119, 1)
+                        DisabledBorderColor: =RGBA(238, 241, 246, 1)
                         DisabledColor: =RGBA(225, 223, 221, 1)
                         DisabledFill: =RGBA(0, 0, 0, 0)
                         FocusedBorderThickness: =4
                         Height: =36
                         HoverBorderColor: =RGBA(0, 0, 0, 0)
-                        HoverColor: =RGBA(16, 110, 190, 1)
+                        HoverColor: =RGBA(10, 74, 147, 1)
                         HoverFill: =RGBA(0, 0, 0, 0)
                         Icon: =Icon.BackArrow
                         LayoutMinHeight: =16
                         LayoutMinWidth: =16
                         OnSelect: =Back(ScreenTransition.Fade)
                         PressedBorderColor: =RGBA(0, 0, 0, 0)
-                        PressedColor: =RGBA(16, 110, 190, 1)
+                        PressedColor: =RGBA(10, 74, 147, 1)
                         PressedFill: =RGBA(0, 0, 0, 0)
                         Tooltip: ="Back"
                         Width: =36
@@ -109,8 +110,8 @@ Screens:
                             Control: Label@2.5.1
                             Properties:
                               BorderColor: =RGBA(0, 0, 0, 1)
-                              Color: =RGBA(50, 49, 48, 1)
-                              DisabledColor: =RGBA(161, 159, 157, 1)
+                              Color: =RGBA(23, 35, 58, 1)
+                              DisabledColor: =RGBA(139, 148, 163, 1)
                               Font: =Font.'Segoe UI'
                               FontWeight: =FontWeight.Semibold
                               Height: =Self.Size * 2.9
@@ -128,8 +129,8 @@ Screens:
                             Control: Label@2.5.1
                             Properties:
                               BorderColor: =RGBA(0, 0, 0, 1)
-                              Color: =RGBA(96, 94, 92, 1)
-                              DisabledColor: =RGBA(161, 159, 157, 1)
+                              Color: =RGBA(90, 101, 119, 1)
+                              DisabledColor: =RGBA(139, 148, 163, 1)
                               Font: =Font.'Segoe UI'
                               Height: =Self.Size * 2.9
                               LayoutMinHeight: =16
@@ -150,15 +151,15 @@ Screens:
                       Properties:
                         AccessibleLabel: ="Edit this setup"
                         BorderColor: =RGBA(0, 0, 0, 0)
-                        Color: =RGBA(0, 120, 212, 1)
-                        DisabledBorderColor: =RGBA(245, 245, 245, 1)
+                        Color: =RGBA(0, 46, 101, 1)
+                        DisabledBorderColor: =RGBA(238, 241, 246, 1)
                         DisabledColor: =RGBA(225, 223, 221, 1)
                         DisabledFill: =RGBA(0, 0, 0, 0)
                         DisplayMode: =If(IsBlank(varCurrentSetup.'Id (ID)'), DisplayMode.Disabled, DisplayMode.Edit)
                         FocusedBorderThickness: =4
                         Height: =36
                         HoverBorderColor: =RGBA(0, 0, 0, 0)
-                        HoverColor: =RGBA(16, 110, 190, 1)
+                        HoverColor: =RGBA(10, 74, 147, 1)
                         HoverFill: =RGBA(0, 0, 0, 0)
                         Icon: =Icon.Edit
                         LayoutMinHeight: =16
@@ -167,7 +168,7 @@ Screens:
                           =Set(varEditSetup, varCurrentSetup);
                           Navigate(scr_SetupEdit, ScreenTransition.Fade)
                         PressedBorderColor: =RGBA(0, 0, 0, 0)
-                        PressedColor: =RGBA(16, 110, 190, 1)
+                        PressedColor: =RGBA(10, 74, 147, 1)
                         PressedFill: =RGBA(0, 0, 0, 0)
                         Tooltip: ="Edit setup"
                         Width: =36
@@ -198,7 +199,7 @@ Screens:
                         Align: =Align.Center
                         BorderColor: =RGBA(0, 0, 0, 1)
                         Color: =RGBA(255, 255, 255, 1)
-                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        DisabledColor: =RGBA(139, 148, 163, 1)
                         Fill: |-
                           =With(
                               {
@@ -206,16 +207,16 @@ Screens:
                                   done: Concat(varCurrentSetup.CommissioningDone, Value, " | ")
                               },
                               If(
-                                  req = "None",                       RGBA(16, 124, 16, 1),
+                                  req = "None",                       RGBA(27, 94, 52, 1),
                                   // Commissioned at this campus, among possibly several.
-                                  !IsBlank(Find(req, done)),          RGBA(16, 124, 16, 1),
+                                  !IsBlank(Find(req, done)),          RGBA(27, 94, 52, 1),
                                   // An extended commissioning covers the administrative one.
                                   req = "administrative"
                                       && !IsBlank(Find("extended", done)),
-                                                                      RGBA(16, 124, 16, 1),
-                                  IsBlank(done),                      RGBA(168, 0, 0, 1),
+                                                                      RGBA(27, 94, 52, 1),
+                                  IsBlank(done),                      RGBA(163, 18, 28, 1),
                                   // Something was done, but not what this asset needs.
-                                  RGBA(196, 116, 0, 1)
+                                  RGBA(138, 75, 0, 1)
                               )
                           )
                         Font: =Font.'Segoe UI'
@@ -256,12 +257,12 @@ Screens:
                         Align: =Align.Center
                         BorderColor: =RGBA(0, 0, 0, 1)
                         Color: =RGBA(255, 255, 255, 1)
-                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        DisabledColor: =RGBA(139, 148, 163, 1)
                         Fill: |-
                           =If(
-                              IsBlank(varCurrentSetup.Status.Value), RGBA(161, 159, 157, 1),
-                              varCurrentSetup.Status.Value = "Operational", RGBA(16, 124, 16, 1),
-                              RGBA(196, 116, 0, 1)
+                              IsBlank(varCurrentSetup.Status.Value), RGBA(139, 148, 163, 1),
+                              varCurrentSetup.Status.Value = "Operational", RGBA(27, 94, 52, 1),
+                              RGBA(138, 75, 0, 1)
                           )
                         Font: =Font.'Segoe UI'
                         FontWeight: =FontWeight.Semibold
@@ -299,9 +300,9 @@ Screens:
                       Control: Label@2.5.1
                       Properties:
                         BorderColor: =RGBA(0, 0, 0, 1)
-                        Color: =RGBA(96, 94, 92, 1)
-                        DisabledColor: =RGBA(161, 159, 157, 1)
-                        Fill: =RGBA(245, 245, 245, 1)
+                        Color: =RGBA(90, 101, 119, 1)
+                        DisabledColor: =RGBA(139, 148, 163, 1)
+                        Fill: =RGBA(238, 241, 246, 1)
                         Font: =Font.'Segoe UI'
                         FontWeight: =FontWeight.Semibold
                         Height: =26
@@ -320,7 +321,8 @@ Screens:
                       Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
                       Properties:
                         AlignInContainer: =AlignInContainer.SetByContainer
-                        BorderColor: =RGBA(245, 245, 245, 1)
+                        BorderColor: =RGBA(238, 241, 246, 1)
+                        Fill: =RGBA(255, 255, 255, 1)
                         FillPortions: =0
                         Height: =CountRows(varSetupFields) * 34
                         Items: =varSetupFields
@@ -334,8 +336,8 @@ Screens:
                             Control: Label@2.5.1
                             Properties:
                               BorderColor: =RGBA(0, 0, 0, 1)
-                              Color: =RGBA(96, 94, 92, 1)
-                              DisabledColor: =RGBA(161, 159, 157, 1)
+                              Color: =RGBA(90, 101, 119, 1)
+                              DisabledColor: =RGBA(139, 148, 163, 1)
                               Font: =Font.'Segoe UI'
                               FontWeight: =If(ThisItem.IsSelected, FontWeight.Semibold, FontWeight.Normal)
                               Height: =30
@@ -352,8 +354,8 @@ Screens:
                             Control: Label@2.5.1
                             Properties:
                               BorderColor: =RGBA(0, 0, 0, 1)
-                              Color: =RGBA(50, 49, 48, 1)
-                              DisabledColor: =RGBA(161, 159, 157, 1)
+                              Color: =RGBA(23, 35, 58, 1)
+                              DisabledColor: =RGBA(139, 148, 163, 1)
                               Font: =Font.'Segoe UI'
                               FontWeight: =FontWeight.Semibold
                               Height: =30
@@ -371,7 +373,7 @@ Screens:
                             Control: Rectangle@2.3.0
                             Properties:
                               BorderColor: =RGBA(0, 0, 0, 0)
-                              Fill: =RGBA(240, 240, 240, 1)
+                              Fill: =RGBA(232, 236, 242, 1)
                               Height: =1
                               OnSelect: =Select(Parent)
                               Visible: =ThisItem.IsSelected
@@ -381,9 +383,9 @@ Screens:
                       Control: Label@2.5.1
                       Properties:
                         BorderColor: =RGBA(0, 0, 0, 1)
-                        Color: =RGBA(96, 94, 92, 1)
-                        DisabledColor: =RGBA(161, 159, 157, 1)
-                        Fill: =RGBA(245, 245, 245, 1)
+                        Color: =RGBA(90, 101, 119, 1)
+                        DisabledColor: =RGBA(139, 148, 163, 1)
+                        Fill: =RGBA(238, 241, 246, 1)
                         Font: =Font.'Segoe UI'
                         FontWeight: =FontWeight.Semibold
                         Height: =26
@@ -408,7 +410,8 @@ Screens:
                       Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
                       Properties:
                         AlignInContainer: =AlignInContainer.SetByContainer
-                        BorderColor: =RGBA(245, 245, 245, 1)
+                        BorderColor: =RGBA(238, 241, 246, 1)
+                        Fill: =RGBA(255, 255, 255, 1)
                         FillPortions: =0
                         Height: |-
                           =Max(
@@ -432,8 +435,8 @@ Screens:
                             Control: Label@2.5.1
                             Properties:
                               BorderColor: =RGBA(0, 0, 0, 1)
-                              Color: =RGBA(50, 49, 48, 1)
-                              DisabledColor: =RGBA(161, 159, 157, 1)
+                              Color: =RGBA(23, 35, 58, 1)
+                              DisabledColor: =RGBA(139, 148, 163, 1)
                               Font: =Font.'Segoe UI'
                               FontWeight: =FontWeight.Semibold
                               Height: =If(Parent.TemplateWidth < 600, 62, 22)
@@ -458,8 +461,8 @@ Screens:
                             Control: Label@2.5.1
                             Properties:
                               BorderColor: =RGBA(0, 0, 0, 1)
-                              Color: =RGBA(96, 94, 92, 1)
-                              DisabledColor: =RGBA(161, 159, 157, 1)
+                              Color: =RGBA(90, 101, 119, 1)
+                              DisabledColor: =RGBA(139, 148, 163, 1)
                               Font: =Font.'Segoe UI'
                               FontWeight: =If(ThisItem.IsSelected, FontWeight.Semibold, FontWeight.Normal)
                               Height: =20
@@ -484,19 +487,19 @@ Screens:
                             Properties:
                               AccessibleLabel: ="Remove this asset from the setup"
                               BorderColor: =RGBA(0, 0, 0, 0)
-                              Color: =RGBA(168, 0, 0, 1)
-                              DisabledBorderColor: =RGBA(245, 245, 245, 1)
+                              Color: =RGBA(163, 18, 28, 1)
+                              DisabledBorderColor: =RGBA(238, 241, 246, 1)
                               DisabledColor: =RGBA(225, 223, 221, 1)
                               DisabledFill: =RGBA(0, 0, 0, 0)
                               FocusedBorderThickness: =4
                               Height: =20
                               HoverBorderColor: =RGBA(0, 0, 0, 0)
-                              HoverColor: =RGBA(16, 110, 190, 1)
-                              HoverFill: =RGBA(253, 243, 243, 1)
+                              HoverColor: =RGBA(10, 74, 147, 1)
+                              HoverFill: =RGBA(253, 232, 234, 1)
                               Icon: =Icon.Cancel
                               OnSelect: =Set(varRemoveFromSetup, ThisItem)
                               PressedBorderColor: =RGBA(0, 0, 0, 0)
-                              PressedColor: =RGBA(16, 110, 190, 1)
+                              PressedColor: =RGBA(10, 74, 147, 1)
                               PressedFill: =RGBA(0, 0, 0, 0)
                               Tooltip: ="Remove from setup"
                               Width: =20
@@ -507,21 +510,21 @@ Screens:
                             Properties:
                               AccessibleLabel: ="Open this asset"
                               BorderColor: =RGBA(0, 0, 0, 1)
-                              Color: =RGBA(166, 166, 166, 1)
-                              DisabledBorderColor: =RGBA(245, 245, 245, 1)
+                              Color: =RGBA(139, 148, 163, 1)
+                              DisabledBorderColor: =RGBA(238, 241, 246, 1)
                               DisabledColor: =RGBA(225, 223, 221, 1)
                               DisabledFill: =RGBA(0, 0, 0, 0)
                               FocusedBorderThickness: =4
                               Height: =20
                               HoverBorderColor: =RGBA(0, 0, 0, 0)
-                              HoverColor: =RGBA(16, 110, 190, 1)
+                              HoverColor: =RGBA(10, 74, 147, 1)
                               HoverFill: =RGBA(0, 0, 0, 0)
                               Icon: =Icon.ChevronRight
                               OnSelect: |-
                                 =Set(varCurrentAsset, ThisItem);
                                 Navigate(scr_AssetDetail, ScreenTransition.Fade)
                               PressedBorderColor: =RGBA(0, 0, 0, 0)
-                              PressedColor: =RGBA(16, 110, 190, 1)
+                              PressedColor: =RGBA(10, 74, 147, 1)
                               PressedFill: =RGBA(0, 0, 0, 0)
                               Width: =20
                               X: =Parent.TemplateWidth - Self.Width - 40
@@ -530,7 +533,7 @@ Screens:
                             Control: Rectangle@2.3.0
                             Properties:
                               BorderColor: =RGBA(0, 0, 0, 0)
-                              Fill: =RGBA(240, 240, 240, 1)
+                              Fill: =RGBA(232, 236, 242, 1)
                               Height: =1
                               OnSelect: |-
                                 =Set(varCurrentAsset, ThisItem);
@@ -542,8 +545,8 @@ Screens:
                       Control: Label@2.5.1
                       Properties:
                         BorderColor: =RGBA(0, 0, 0, 1)
-                        Color: =RGBA(161, 159, 157, 1)
-                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        Color: =RGBA(139, 148, 163, 1)
+                        DisabledColor: =RGBA(139, 148, 163, 1)
                         Font: =Font.'Segoe UI'
                         Height: =Self.Size * 4.2
                         LayoutMinHeight: =16
@@ -564,6 +567,7 @@ Screens:
                       Variant: AutoLayout
                       Properties:
                         AlignInContainer: =AlignInContainer.SetByContainer
+                        Fill: =RGBA(255, 255, 255, 1)
                         FillPortions: =0
                         Height: |-
                           =22 + 40 + 8 +
@@ -587,8 +591,8 @@ Screens:
                             Control: Label@2.5.1
                             Properties:
                               BorderColor: =RGBA(0, 0, 0, 1)
-                              Color: =RGBA(96, 94, 92, 1)
-                              DisabledColor: =RGBA(161, 159, 157, 1)
+                              Color: =RGBA(90, 101, 119, 1)
+                              DisabledColor: =RGBA(139, 148, 163, 1)
                               Font: =Font.'Segoe UI'
                               FontWeight: =FontWeight.Semibold
                               Height: =22
@@ -631,23 +635,23 @@ Screens:
                               - btnSetupAddChip:
                                   Control: Classic/Button@2.2.0
                                   Properties:
-                                    BorderColor: =RGBA(0, 120, 212, 1)
+                                    BorderColor: =RGBA(0, 46, 101, 1)
                                     BorderStyle: =BorderStyle.None
                                     BorderThickness: =1
                                     Color: =RGBA(255, 255, 255, 1)
                                     DisabledBorderColor: =RGBA(0, 0, 0, 0)
-                                    DisabledColor: =RGBA(161, 159, 157, 1)
+                                    DisabledColor: =RGBA(139, 148, 163, 1)
                                     DisabledFill: =RGBA(242, 242, 241, 0)
-                                    Fill: =RGBA(0, 120, 212, 1)
+                                    Fill: =RGBA(0, 46, 101, 1)
                                     Font: =Font.'Segoe UI'
                                     Height: =28
                                     HoverBorderColor: =RGBA(0, 0, 0, 0)
                                     HoverColor: =RGBA(255, 255, 255, 1)
-                                    HoverFill: =RGBA(168, 0, 0, 1)
+                                    HoverFill: =RGBA(163, 18, 28, 1)
                                     OnSelect: =Remove(colSetupAddPick, LookUp(colSetupAddPick, Value = ThisItem.Value))
                                     PressedBorderColor: =RGBA(0, 69, 120, 1)
                                     PressedColor: =RGBA(255, 255, 255, 1)
-                                    PressedFill: =RGBA(16, 110, 190, 1)
+                                    PressedFill: =RGBA(10, 74, 147, 1)
                                     RadiusBottomLeft: =14
                                     RadiusBottomRight: =14
                                     RadiusTopLeft: =14
@@ -662,9 +666,9 @@ Screens:
                             Control: Label@2.5.1
                             Properties:
                               BorderColor: =RGBA(0, 0, 0, 1)
-                              Color: =RGBA(161, 159, 157, 1)
-                              DisabledColor: =RGBA(161, 159, 157, 1)
-                              Fill: =RGBA(243, 242, 241, 1)
+                              Color: =RGBA(139, 148, 163, 1)
+                              DisabledColor: =RGBA(139, 148, 163, 1)
+                              Fill: =RGBA(238, 241, 246, 1)
                               Font: =Font.'Segoe UI'
                               Height: =Self.Size * 2.9
                               LayoutMinHeight: =0
@@ -682,21 +686,21 @@ Screens:
                         - txtSetupAddSearch:
                             Control: Classic/TextInput@2.3.2
                             Properties:
-                              BorderColor: =RGBA(219, 219, 219, 1)
-                              Color: =RGBA(50, 49, 48, 1)
+                              BorderColor: =RGBA(211, 217, 226, 1)
+                              Color: =RGBA(23, 35, 58, 1)
                               Default: =""
                               DisabledBorderColor: =RGBA(0, 0, 0, 0)
-                              DisabledColor: =RGBA(161, 159, 157, 1)
+                              DisabledColor: =RGBA(139, 148, 163, 1)
                               DisabledFill: =RGBA(242, 242, 241, 0)
                               Font: =Font.'Segoe UI'
                               HintText: =If(Parent.Width < 600, "Search ID, device, maker", "Type to search by ID, device or manufacturer")
-                              HoverBorderColor: =RGBA(16, 110, 190, 1)
-                              HoverColor: =RGBA(50, 49, 48, 1)
+                              HoverBorderColor: =RGBA(10, 74, 147, 1)
+                              HoverColor: =RGBA(23, 35, 58, 1)
                               HoverFill: =RGBA(255, 255, 255, 1)
                               LayoutMinHeight: =16
                               LayoutMinWidth: =16
-                              PressedBorderColor: =RGBA(0, 120, 212, 1)
-                              PressedColor: =RGBA(50, 49, 48, 1)
+                              PressedBorderColor: =RGBA(0, 46, 101, 1)
+                              PressedColor: =RGBA(23, 35, 58, 1)
                               PressedFill: =RGBA(255, 255, 255, 1)
                               RadiusBottomLeft: =0
                               RadiusBottomRight: =0
@@ -709,7 +713,7 @@ Screens:
                             Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
                             Properties:
                               AlignInContainer: =AlignInContainer.SetByContainer
-                              BorderColor: =RGBA(240, 240, 240, 1)
+                              BorderColor: =RGBA(232, 236, 242, 1)
                               Height: =Parent.Height
                               Items: |-
                                 =With(
@@ -738,8 +742,8 @@ Screens:
                                   Control: Label@2.5.1
                                   Properties:
                                     BorderColor: =RGBA(0, 0, 0, 1)
-                                    Color: =RGBA(50, 49, 48, 1)
-                                    DisabledColor: =RGBA(161, 159, 157, 1)
+                                    Color: =RGBA(23, 35, 58, 1)
+                                    DisabledColor: =RGBA(139, 148, 163, 1)
                                     Font: =Font.'Segoe UI'
                                     FontWeight: =FontWeight.Semibold
                                     Height: =If(Parent.TemplateWidth < 420, 58, 40)
@@ -771,8 +775,8 @@ Screens:
                                   Control: Label@2.5.1
                                   Properties:
                                     BorderColor: =RGBA(0, 0, 0, 1)
-                                    Color: =RGBA(96, 94, 92, 1)
-                                    DisabledColor: =RGBA(161, 159, 157, 1)
+                                    Color: =RGBA(90, 101, 119, 1)
+                                    DisabledColor: =RGBA(139, 148, 163, 1)
                                     Font: =Font.'Segoe UI'
                                     FontWeight: =If(ThisItem.IsSelected, FontWeight.Semibold, FontWeight.Normal)
                                     Height: =18
@@ -804,7 +808,7 @@ Screens:
                                   Control: Rectangle@2.3.0
                                   Properties:
                                     BorderColor: =RGBA(0, 0, 0, 0)
-                                    Fill: =RGBA(240, 240, 240, 1)
+                                    Fill: =RGBA(232, 236, 242, 1)
                                     Height: =1
                                     OnSelect: |-
                                       =If(
@@ -825,14 +829,14 @@ Screens:
                         BorderStyle: =BorderStyle.None
                         Color: =RGBA(255, 255, 255, 1)
                         DisabledBorderColor: =RGBA(0, 0, 0, 0)
-                        DisabledColor: =RGBA(161, 159, 157, 1)
-                        DisabledFill: =RGBA(237, 235, 233, 1)
+                        DisabledColor: =RGBA(139, 148, 163, 1)
+                        DisabledFill: =RGBA(233, 237, 243, 1)
                         DisplayMode: =If(IsEmpty(colSetupAddPick) || IsBlank(varCurrentSetup.'Id (ID)'), DisplayMode.Disabled, DisplayMode.Edit)
-                        Fill: =RGBA(0, 120, 212, 1)
+                        Fill: =RGBA(0, 46, 101, 1)
                         Font: =Font.'Segoe UI'
                         HoverBorderColor: =RGBA(0, 0, 0, 0)
                         HoverColor: =RGBA(255, 255, 255, 1)
-                        HoverFill: =RGBA(16, 110, 190, 1)
+                        HoverFill: =RGBA(10, 74, 147, 1)
                         LayoutMinHeight: =16
                         LayoutMinWidth: =16
                         OnSelect: |-
@@ -880,11 +884,11 @@ Screens:
                           )
                         PressedBorderColor: =RGBA(0, 69, 120, 1)
                         PressedColor: =RGBA(255, 255, 255, 1)
-                        PressedFill: =RGBA(16, 110, 190, 1)
-                        RadiusBottomLeft: =4
-                        RadiusBottomRight: =4
-                        RadiusTopLeft: =4
-                        RadiusTopRight: =4
+                        PressedFill: =RGBA(10, 74, 147, 1)
+                        RadiusBottomLeft: =6
+                        RadiusBottomRight: =6
+                        RadiusTopLeft: =6
+                        RadiusTopRight: =6
                         Size: =12
                         Text: |-
                           =If(
@@ -897,9 +901,9 @@ Screens:
                       Control: Label@2.5.1
                       Properties:
                         BorderColor: =RGBA(0, 0, 0, 1)
-                        Color: =RGBA(96, 94, 92, 1)
-                        DisabledColor: =RGBA(161, 159, 157, 1)
-                        Fill: =RGBA(245, 245, 245, 1)
+                        Color: =RGBA(90, 101, 119, 1)
+                        DisabledColor: =RGBA(139, 148, 163, 1)
+                        Fill: =RGBA(238, 241, 246, 1)
                         Font: =Font.'Segoe UI'
                         FontWeight: =FontWeight.Semibold
                         Height: =26
@@ -916,19 +920,19 @@ Screens:
                   - btnOpenSetupDocs:
                       Control: Classic/Button@2.2.0
                       Properties:
-                        BorderColor: =RGBA(219, 219, 219, 1)
+                        BorderColor: =RGBA(211, 217, 226, 1)
                         BorderStyle: =BorderStyle.None
                         BorderThickness: =1
-                        Color: =RGBA(0, 120, 212, 1)
+                        Color: =RGBA(0, 46, 101, 1)
                         DisabledBorderColor: =RGBA(0, 0, 0, 0)
-                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        DisabledColor: =RGBA(139, 148, 163, 1)
                         DisabledFill: =RGBA(242, 242, 241, 0)
                         Fill: =RGBA(255, 255, 255, 1)
                         Font: =Font.'Segoe UI'
                         Height: =36
                         HoverBorderColor: =RGBA(0, 0, 0, 0)
                         HoverColor: =RGBA(255, 255, 255, 1)
-                        HoverFill: =RGBA(235, 243, 252, 1)
+                        HoverFill: =RGBA(232, 239, 248, 1)
                         LayoutMinHeight: =16
                         LayoutMinWidth: =16
                         OnSelect: |-
@@ -940,11 +944,11 @@ Screens:
                           )
                         PressedBorderColor: =RGBA(0, 69, 120, 1)
                         PressedColor: =RGBA(255, 255, 255, 1)
-                        PressedFill: =RGBA(16, 110, 190, 1)
-                        RadiusBottomLeft: =4
-                        RadiusBottomRight: =4
-                        RadiusTopLeft: =4
-                        RadiusTopRight: =4
+                        PressedFill: =RGBA(10, 74, 147, 1)
+                        RadiusBottomLeft: =6
+                        RadiusBottomRight: =6
+                        RadiusTopLeft: =6
+                        RadiusTopRight: =6
                         Size: =12
                         Text: ="Open this setup's folder"
                         Width: =If(Parent.Width < 600, Parent.Width - 16, 300)
@@ -953,7 +957,8 @@ Screens:
                       Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
                       Properties:
                         AlignInContainer: =AlignInContainer.SetByContainer
-                        BorderColor: =RGBA(245, 245, 245, 1)
+                        BorderColor: =RGBA(238, 241, 246, 1)
+                        Fill: =RGBA(255, 255, 255, 1)
                         FillPortions: =0
                         Height: |-
                           =Max(
@@ -984,8 +989,8 @@ Screens:
                             Control: Label@2.5.1
                             Properties:
                               BorderColor: =RGBA(0, 0, 0, 1)
-                              Color: =RGBA(0, 120, 212, 1)
-                              DisabledColor: =RGBA(161, 159, 157, 1)
+                              Color: =RGBA(0, 46, 101, 1)
+                              DisabledColor: =RGBA(139, 148, 163, 1)
                               Font: =Font.'Segoe UI'
                               FontWeight: =If(ThisItem.IsSelected, FontWeight.Semibold, FontWeight.Normal)
                               Height: =34
@@ -1005,8 +1010,8 @@ Screens:
                             Properties:
                               Align: =Align.Right
                               BorderColor: =RGBA(0, 0, 0, 1)
-                              Color: =RGBA(161, 159, 157, 1)
-                              DisabledColor: =RGBA(161, 159, 157, 1)
+                              Color: =RGBA(139, 148, 163, 1)
+                              DisabledColor: =RGBA(139, 148, 163, 1)
                               Font: =Font.'Segoe UI'
                               FontWeight: =If(ThisItem.IsSelected, FontWeight.Semibold, FontWeight.Normal)
                               Height: =34
@@ -1025,7 +1030,7 @@ Screens:
                 Variant: AutoLayout
                 Properties:
                   AlignInContainer: =AlignInContainer.SetByContainer
-                  Fill: =RGBA(250, 250, 250, 1)
+                  Fill: =RGBA(255, 255, 255, 1)
                   FillPortions: =0
                   Height: =76
                   LayoutAlignItems: =LayoutAlignItems.Center
@@ -1048,14 +1053,14 @@ Screens:
                         BorderStyle: =BorderStyle.None
                         Color: =RGBA(255, 255, 255, 1)
                         DisabledBorderColor: =RGBA(0, 0, 0, 0)
-                        DisabledColor: =RGBA(161, 159, 157, 1)
-                        DisabledFill: =RGBA(237, 235, 233, 1)
+                        DisabledColor: =RGBA(139, 148, 163, 1)
+                        DisabledFill: =RGBA(233, 237, 243, 1)
                         DisplayMode: =If(IsBlank(varCurrentSetup.'Id (ID)'), DisplayMode.Disabled, DisplayMode.Edit)
-                        Fill: =RGBA(0, 120, 212, 1)
+                        Fill: =RGBA(0, 46, 101, 1)
                         Font: =Font.'Segoe UI'
                         HoverBorderColor: =RGBA(0, 0, 0, 0)
                         HoverColor: =RGBA(255, 255, 255, 1)
-                        HoverFill: =RGBA(16, 110, 190, 1)
+                        HoverFill: =RGBA(10, 74, 147, 1)
                         LayoutMinHeight: =16
                         LayoutMinWidth: =16
                         OnSelect: |-
@@ -1074,11 +1079,11 @@ Screens:
                           Navigate(scr_Move, ScreenTransition.Fade)
                         PressedBorderColor: =RGBA(0, 69, 120, 1)
                         PressedColor: =RGBA(255, 255, 255, 1)
-                        PressedFill: =RGBA(16, 110, 190, 1)
-                        RadiusBottomLeft: =4
-                        RadiusBottomRight: =4
-                        RadiusTopLeft: =4
-                        RadiusTopRight: =4
+                        PressedFill: =RGBA(10, 74, 147, 1)
+                        RadiusBottomLeft: =6
+                        RadiusBottomRight: =6
+                        RadiusTopLeft: =6
+                        RadiusTopRight: =6
                         Size: =13
                         Text: ="Move entire setup"
                         Width: =If(Parent.Width < 760, Parent.Width - 32, 250)
@@ -1086,7 +1091,7 @@ Screens:
           Control: GroupContainer@1.5.0
           Variant: AutoLayout
           Properties:
-            BorderColor: =RGBA(200, 198, 196, 1)
+            BorderColor: =RGBA(203, 210, 221, 1)
             BorderThickness: =1
             Fill: =RGBA(255, 255, 255, 1)
             Height: =If(Parent.Width < 600, 300, 230)
@@ -1110,8 +1115,8 @@ Screens:
                 Control: Label@2.5.1
                 Properties:
                   BorderColor: =RGBA(0, 0, 0, 1)
-                  Color: =RGBA(50, 49, 48, 1)
-                  DisabledColor: =RGBA(161, 159, 157, 1)
+                  Color: =RGBA(23, 35, 58, 1)
+                  DisabledColor: =RGBA(139, 148, 163, 1)
                   Font: =Font.'Segoe UI'
                   FontWeight: =FontWeight.Semibold
                   Height: =Self.Size * 2.9
@@ -1130,8 +1135,8 @@ Screens:
                 Control: Label@2.5.1
                 Properties:
                   BorderColor: =RGBA(0, 0, 0, 1)
-                  Color: =RGBA(96, 94, 92, 1)
-                  DisabledColor: =RGBA(161, 159, 157, 1)
+                  Color: =RGBA(90, 101, 119, 1)
+                  DisabledColor: =RGBA(139, 148, 163, 1)
                   Font: =Font.'Segoe UI'
                   Height: =If(Parent.Width < 600, 150, 90)
                   LayoutMinHeight: =16
@@ -1172,28 +1177,28 @@ Screens:
                   - btnRemoveCancel:
                       Control: Classic/Button@2.2.0
                       Properties:
-                        BorderColor: =RGBA(219, 219, 219, 1)
+                        BorderColor: =RGBA(211, 217, 226, 1)
                         BorderStyle: =BorderStyle.None
                         BorderThickness: =1
-                        Color: =RGBA(50, 49, 48, 1)
+                        Color: =RGBA(23, 35, 58, 1)
                         DisabledBorderColor: =RGBA(0, 0, 0, 0)
-                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        DisabledColor: =RGBA(139, 148, 163, 1)
                         DisabledFill: =RGBA(242, 242, 241, 0)
                         Fill: =RGBA(255, 255, 255, 1)
                         Font: =Font.'Segoe UI'
                         HoverBorderColor: =RGBA(0, 0, 0, 0)
                         HoverColor: =RGBA(255, 255, 255, 1)
-                        HoverFill: =RGBA(243, 242, 241, 1)
+                        HoverFill: =RGBA(238, 241, 246, 1)
                         LayoutMinHeight: =16
                         LayoutMinWidth: =16
                         OnSelect: =Set(varRemoveFromSetup, Blank())
                         PressedBorderColor: =RGBA(0, 69, 120, 1)
                         PressedColor: =RGBA(255, 255, 255, 1)
-                        PressedFill: =RGBA(16, 110, 190, 1)
-                        RadiusBottomLeft: =4
-                        RadiusBottomRight: =4
-                        RadiusTopLeft: =4
-                        RadiusTopRight: =4
+                        PressedFill: =RGBA(10, 74, 147, 1)
+                        RadiusBottomLeft: =6
+                        RadiusBottomRight: =6
+                        RadiusTopLeft: =6
+                        RadiusTopRight: =6
                         Size: =12
                         Text: ="Cancel"
                         Width: =If(Parent.Width < 400, (Parent.Width - 10) / 2, 130)
@@ -1204,13 +1209,13 @@ Screens:
                         BorderStyle: =BorderStyle.None
                         Color: =RGBA(255, 255, 255, 1)
                         DisabledBorderColor: =RGBA(0, 0, 0, 0)
-                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        DisabledColor: =RGBA(139, 148, 163, 1)
                         DisabledFill: =RGBA(242, 242, 241, 0)
-                        Fill: =RGBA(168, 0, 0, 1)
+                        Fill: =RGBA(163, 18, 28, 1)
                         Font: =Font.'Segoe UI'
                         HoverBorderColor: =RGBA(0, 0, 0, 0)
                         HoverColor: =RGBA(255, 255, 255, 1)
-                        HoverFill: =RGBA(138, 0, 0, 1)
+                        HoverFill: =RGBA(163, 18, 28, 1)
                         LayoutMinHeight: =16
                         LayoutMinWidth: =16
                         OnSelect: |-
@@ -1249,11 +1254,11 @@ Screens:
                           Set(varRemoveFromSetup, Blank())
                         PressedBorderColor: =RGBA(0, 69, 120, 1)
                         PressedColor: =RGBA(255, 255, 255, 1)
-                        PressedFill: =RGBA(16, 110, 190, 1)
-                        RadiusBottomLeft: =4
-                        RadiusBottomRight: =4
-                        RadiusTopLeft: =4
-                        RadiusTopRight: =4
+                        PressedFill: =RGBA(10, 74, 147, 1)
+                        RadiusBottomLeft: =6
+                        RadiusBottomRight: =6
+                        RadiusTopLeft: =6
+                        RadiusTopRight: =6
                         Size: =12
                         Text: ="Remove"
                         Width: =If(Parent.Width < 400, (Parent.Width - 10) / 2, 130)

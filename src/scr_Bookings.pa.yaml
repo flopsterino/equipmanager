@@ -14,7 +14,18 @@ Screens:
       OnVisible: |-
         =If(IsBlank(varBookingView), Set(varBookingView, "calendar"));
         If(IsBlank(varCalMonth), Set(varCalMonth, Date(Year(Today()), Month(Today()), 1)));
-        If(IsBlank(varCalDay), Set(varCalDay, Today()))
+        If(IsBlank(varCalDay), Set(varCalDay, Today()));
+        // Only research groups book equipment. BlueApp and ELIN are owner groups in
+        // Equipment_Assets but not research groups, so they are left out here. The
+        // names are matched against the choice list rather than typed out as chips,
+        // so a group renamed in SharePoint drops out instead of becoming a dead chip.
+        ClearCollect(
+            colResearchGroups,
+            Filter(
+                Choices(Equipment_Assets.OwnerGroup),
+                Value in ["ELCAT", "ElectrifHy", "Plasmant"]
+            )
+        )
     Children:
       - conBookings:
           Control: GroupContainer@1.5.0
@@ -473,7 +484,7 @@ Screens:
                   FillPortions: =0
                   Height: |-
                     =18 + 14 + RoundUp(
-                        CountRows(Choices(Equipment_Assets.OwnerGroup)) / If(Parent.Width < 600, 2, 4),
+                        CountRows(colResearchGroups) / If(Parent.Width < 600, 2, 4),
                         0
                     ) * 38
                   LayoutAlignItems: =LayoutAlignItems.Center
@@ -519,7 +530,7 @@ Screens:
                         AlignInContainer: =AlignInContainer.SetByContainer
                         BorderColor: =RGBA(255, 255, 255, 1)
                         Height: =Parent.Height
-                        Items: =Sort(Choices(Equipment_Assets.OwnerGroup), Value)
+                        Items: =Sort(colResearchGroups, Value)
                         LayoutMinHeight: =16
                         LayoutMinWidth: =16
                         ShowScrollbar: =false

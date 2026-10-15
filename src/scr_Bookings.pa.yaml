@@ -26,6 +26,17 @@ Screens:
                 Choices(Equipment_Assets.UserGroup),
                 Value in ["ELCAT", "ElectrifHy", "Plasmant"]
             )
+        );
+        // What ELIN and BlueApp own is shared: any of the three groups may use it.
+        // Their bookings therefore count for every group, so the filter shows what is
+        // taken of everything a group can use - including another group's booking of
+        // a shared device, which is exactly what decides whether it is free.
+        ClearCollect(
+            colSharedOwners,
+            Filter(
+                Choices(Equipment_Assets.OwnerGroup),
+                Value in ["ELIN", "BlueApp"]
+            )
         )
     Children:
       - conBookings:
@@ -515,7 +526,7 @@ Screens:
                         PaddingTop: =0
                         Size: =10
                         Text: |-
-                          ="LAB GROUP - USER" &
+                          ="LAB GROUP - USER OR SHARED" &
                            If(
                                IsEmpty(colGroupFilter),
                                "   (all)",
@@ -917,6 +928,7 @@ Screens:
                                                 || bk.Title = varBookingDevice,
                                             IsEmpty(colGroupFilter)
                                                 || LookUp(Equipment_Assets, Titel = bk.Title).UserGroup.Value in colGroupFilter.Value
+                                                || LookUp(Equipment_Assets, Titel = bk.Title).OwnerGroup.Value in colSharedOwners.Value
                                         )
                                     },
                                     {
@@ -1083,6 +1095,7 @@ Screens:
                                 || bk.Title = varBookingDevice,
                             IsEmpty(colGroupFilter)
                                 || LookUp(Equipment_Assets, Titel = bk.Title).UserGroup.Value in colGroupFilter.Value
+                                || LookUp(Equipment_Assets, Titel = bk.Title).OwnerGroup.Value in colSharedOwners.Value
                         )
                     ) * If(Parent.Width < 600, 76, 60)
                   Items: |-
@@ -1095,6 +1108,7 @@ Screens:
                                 || bk.Title = varBookingDevice,
                             IsEmpty(colGroupFilter)
                                 || LookUp(Equipment_Assets, Titel = bk.Title).UserGroup.Value in colGroupFilter.Value
+                                || LookUp(Equipment_Assets, Titel = bk.Title).OwnerGroup.Value in colSharedOwners.Value
                         ),
                         StartDate,
                         SortOrder.Ascending
@@ -1154,7 +1168,11 @@ Screens:
                               Text(ThisItem.StartDate, DateTimeFormat.ShortDate) & " - " &
                               Text(ThisItem.EndDate, DateTimeFormat.ShortDate) &
                               "   |   " & Coalesce(ThisItem.ReservedBy.DisplayName, "?") &
-                              If(IsBlank(a.UserGroup.Value), "", "   |   " & a.UserGroup.Value) &
+                              If(
+                                  !IsBlank(a.UserGroup.Value), "   |   " & a.UserGroup.Value,
+                                  a.OwnerGroup.Value in colSharedOwners.Value, "   |   shared (" & a.OwnerGroup.Value & ")",
+                                  ""
+                              ) &
                               If(IsBlank(a.'CurrentLocation (CurrentLocation0)'.Value), "", "   |   " & a.'CurrentLocation (CurrentLocation0)'.Value) &
                               If(IsBlank(ThisItem.ProjectCode), "", "   |   " & ThisItem.ProjectCode)
                           )
@@ -1246,7 +1264,9 @@ Screens:
                                 || bk.Title = varBookingDevice,
                             IsEmpty(colGroupFilter)
                                 || LookUp(Equipment_Assets, Titel = bk.Title).UserGroup.Value
-                                    in colGroupFilter.Value,
+                                    in colGroupFilter.Value
+                                || LookUp(Equipment_Assets, Titel = bk.Title).OwnerGroup.Value
+                                    in colSharedOwners.Value,
                             drpBookingFilter.Selected.Value = "All"
                                 || (drpBookingFilter.Selected.Value = "Current and upcoming" && bk.EndDate >= Today())
                                 || (drpBookingFilter.Selected.Value = "My bookings only"
@@ -1261,7 +1281,9 @@ Screens:
                                 || bk.Title = varBookingDevice,
                             IsEmpty(colGroupFilter)
                                 || LookUp(Equipment_Assets, Titel = bk.Title).UserGroup.Value
-                                    in colGroupFilter.Value,
+                                    in colGroupFilter.Value
+                                || LookUp(Equipment_Assets, Titel = bk.Title).OwnerGroup.Value
+                                    in colSharedOwners.Value,
                             drpBookingFilter.Selected.Value = "All"
                                 || (drpBookingFilter.Selected.Value = "Current and upcoming" && bk.EndDate >= Today())
                                 || (drpBookingFilter.Selected.Value = "My bookings only"
@@ -1325,7 +1347,11 @@ Screens:
                               Text(ThisItem.StartDate, DateTimeFormat.ShortDate) & " - " &
                               Text(ThisItem.EndDate, DateTimeFormat.ShortDate) &
                               "   |   " & Coalesce(ThisItem.ReservedBy.DisplayName, "?") &
-                              If(IsBlank(a.UserGroup.Value), "", "   |   " & a.UserGroup.Value) &
+                              If(
+                                  !IsBlank(a.UserGroup.Value), "   |   " & a.UserGroup.Value,
+                                  a.OwnerGroup.Value in colSharedOwners.Value, "   |   shared (" & a.OwnerGroup.Value & ")",
+                                  ""
+                              ) &
                               If(IsBlank(a.'CurrentLocation (CurrentLocation0)'.Value), "", "   |   " & a.'CurrentLocation (CurrentLocation0)'.Value) &
                               If(IsBlank(ThisItem.ProjectCode), "", "   |   " & ThisItem.ProjectCode)
                           )

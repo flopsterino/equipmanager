@@ -15,14 +15,15 @@ Screens:
         =If(IsBlank(varBookingView), Set(varBookingView, "calendar"));
         If(IsBlank(varCalMonth), Set(varCalMonth, Date(Year(Today()), Month(Today()), 1)));
         If(IsBlank(varCalDay), Set(varCalDay, Today()));
-        // Only research groups book equipment. BlueApp and ELIN are owner groups in
-        // Equipment_Assets but not research groups, so they are left out here. The
-        // names are matched against the choice list rather than typed out as chips,
-        // so a group renamed in SharePoint drops out instead of becoming a dead chip.
+        // Only research groups book equipment, and a booking belongs to the group
+        // that USES the device, not the one that owns it. BlueApp and ELIN own
+        // equipment but are not research groups. The names are matched against the
+        // UserGroup choice list rather than typed out as chips, so a group renamed in
+        // SharePoint drops out instead of becoming a dead chip.
         ClearCollect(
             colResearchGroups,
             Filter(
-                Choices(Equipment_Assets.OwnerGroup),
+                Choices(Equipment_Assets.UserGroup),
                 Value in ["ELCAT", "ElectrifHy", "Plasmant"]
             )
         )
@@ -514,7 +515,7 @@ Screens:
                         PaddingTop: =0
                         Size: =10
                         Text: |-
-                          ="LAB GROUPS - OWNER OR USER" &
+                          ="LAB GROUP - USER" &
                            If(
                                IsEmpty(colGroupFilter),
                                "   (all)",
@@ -915,7 +916,6 @@ Screens:
                                             IsBlank(varBookingDevice)
                                                 || bk.Title = varBookingDevice,
                                             IsEmpty(colGroupFilter)
-                                                || LookUp(Equipment_Assets, Titel = bk.Title).OwnerGroup.Value in colGroupFilter.Value
                                                 || LookUp(Equipment_Assets, Titel = bk.Title).UserGroup.Value in colGroupFilter.Value
                                         )
                                     },
@@ -1082,7 +1082,6 @@ Screens:
                             IsBlank(varBookingDevice)
                                 || bk.Title = varBookingDevice,
                             IsEmpty(colGroupFilter)
-                                || LookUp(Equipment_Assets, Titel = bk.Title).OwnerGroup.Value in colGroupFilter.Value
                                 || LookUp(Equipment_Assets, Titel = bk.Title).UserGroup.Value in colGroupFilter.Value
                         )
                     ) * If(Parent.Width < 600, 76, 60)
@@ -1095,7 +1094,6 @@ Screens:
                             IsBlank(varBookingDevice)
                                 || bk.Title = varBookingDevice,
                             IsEmpty(colGroupFilter)
-                                || LookUp(Equipment_Assets, Titel = bk.Title).OwnerGroup.Value in colGroupFilter.Value
                                 || LookUp(Equipment_Assets, Titel = bk.Title).UserGroup.Value in colGroupFilter.Value
                         ),
                         StartDate,
@@ -1156,7 +1154,7 @@ Screens:
                               Text(ThisItem.StartDate, DateTimeFormat.ShortDate) & " - " &
                               Text(ThisItem.EndDate, DateTimeFormat.ShortDate) &
                               "   |   " & Coalesce(ThisItem.ReservedBy.DisplayName, "?") &
-                              If(IsBlank(a.OwnerGroup.Value), "", "   |   " & a.OwnerGroup.Value) &
+                              If(IsBlank(a.UserGroup.Value), "", "   |   " & a.UserGroup.Value) &
                               If(IsBlank(a.'CurrentLocation (CurrentLocation0)'.Value), "", "   |   " & a.'CurrentLocation (CurrentLocation0)'.Value) &
                               If(IsBlank(ThisItem.ProjectCode), "", "   |   " & ThisItem.ProjectCode)
                           )
@@ -1247,8 +1245,6 @@ Screens:
                             IsBlank(varBookingDevice)
                                 || bk.Title = varBookingDevice,
                             IsEmpty(colGroupFilter)
-                                || LookUp(Equipment_Assets, Titel = bk.Title).OwnerGroup.Value
-                                    in colGroupFilter.Value
                                 || LookUp(Equipment_Assets, Titel = bk.Title).UserGroup.Value
                                     in colGroupFilter.Value,
                             drpBookingFilter.Selected.Value = "All"
@@ -1264,8 +1260,6 @@ Screens:
                             IsBlank(varBookingDevice)
                                 || bk.Title = varBookingDevice,
                             IsEmpty(colGroupFilter)
-                                || LookUp(Equipment_Assets, Titel = bk.Title).OwnerGroup.Value
-                                    in colGroupFilter.Value
                                 || LookUp(Equipment_Assets, Titel = bk.Title).UserGroup.Value
                                     in colGroupFilter.Value,
                             drpBookingFilter.Selected.Value = "All"
@@ -1331,7 +1325,7 @@ Screens:
                               Text(ThisItem.StartDate, DateTimeFormat.ShortDate) & " - " &
                               Text(ThisItem.EndDate, DateTimeFormat.ShortDate) &
                               "   |   " & Coalesce(ThisItem.ReservedBy.DisplayName, "?") &
-                              If(IsBlank(a.OwnerGroup.Value), "", "   |   " & a.OwnerGroup.Value) &
+                              If(IsBlank(a.UserGroup.Value), "", "   |   " & a.UserGroup.Value) &
                               If(IsBlank(a.'CurrentLocation (CurrentLocation0)'.Value), "", "   |   " & a.'CurrentLocation (CurrentLocation0)'.Value) &
                               If(IsBlank(ThisItem.ProjectCode), "", "   |   " & ThisItem.ProjectCode)
                           )

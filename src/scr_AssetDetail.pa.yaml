@@ -390,7 +390,11 @@ Screens:
                               Fill: =RGBA(232, 236, 242, 1)
                               Height: =1
                               OnSelect: =Select(Parent)
-                              Visible: =ThisItem.IsSelected
+                              # Always. This came from the browse template, where the rectangle is
+                              # the highlight on the selected row - so it only ever drew on one row.
+                              # Here it is a divider, a cell background or a colour strip, and it has
+                              # to be there on every row.
+                              Visible: =true
                               Width: =Parent.TemplateWidth
                               Y: =Parent.TemplateHeight - 1
                   - lblDocsHeader:
@@ -620,7 +624,11 @@ Screens:
                               Fill: =RGBA(232, 236, 242, 1)
                               Height: =1
                               OnSelect: =Select(Parent)
-                              Visible: =ThisItem.IsSelected
+                              # Always. This came from the browse template, where the rectangle is
+                              # the highlight on the selected row - so it only ever drew on one row.
+                              # Here it is a divider, a cell background or a colour strip, and it has
+                              # to be there on every row.
+                              Visible: =true
                               Width: =Parent.TemplateWidth
                               Y: =Parent.TemplateHeight - 1
                   - lblNoHistory:
@@ -775,7 +783,11 @@ Screens:
                               OnSelect: |-
                                 =Set(varCurrentTicket, ThisItem);
                                 Navigate(scr_TicketDetail, ScreenTransition.Fade)
-                              Visible: =ThisItem.IsSelected
+                              # Always. This came from the browse template, where the rectangle is
+                              # the highlight on the selected row - so it only ever drew on one row.
+                              # Here it is a divider, a cell background or a colour strip, and it has
+                              # to be there on every row.
+                              Visible: =true
                               Width: =Parent.TemplateWidth
                               Y: =Parent.TemplateHeight - 1
                   - lblNoTickets:

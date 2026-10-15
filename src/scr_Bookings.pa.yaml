@@ -416,7 +416,11 @@ Screens:
                                     OnSelect: |-
                                       =Set(varBookingDevice, ThisItem.Titel);
                                       Reset(txtBkDeviceSearch)
-                                    Visible: =ThisItem.IsSelected
+                                    # Always. This came from the browse template, where the rectangle is
+                                    # the highlight on the selected row - so it only ever drew on one row.
+                                    # Here it is a divider, a cell background or a colour strip, and it has
+                                    # to be there on every row.
+                                    Visible: =true
                                     Width: =Parent.TemplateWidth
                                     Y: =Parent.TemplateHeight - 1
                   - btnBkDeviceClear:
@@ -930,7 +934,11 @@ Screens:
                           )
                         Height: =Parent.TemplateHeight - 2
                         OnSelect: =Set(varCalDay, ThisItem.CellDate)
-                        Visible: =ThisItem.IsSelected
+                        # Always. This came from the browse template, where the rectangle is
+                        # the highlight on the selected row - so it only ever drew on one row.
+                        # Here it is a divider, a cell background or a colour strip, and it has
+                        # to be there on every row.
+                        Visible: =true
                         Width: =Parent.TemplateWidth - 2
                         X: =1
                         Y: =1
@@ -1109,7 +1117,11 @@ Screens:
                         OnSelect: |-
                           =Set(varCurrentBooking, ThisItem);
                           Navigate(scr_BookingDetail, ScreenTransition.Fade)
-                        Visible: =ThisItem.IsSelected
+                        # Always. This came from the browse template, where the rectangle is
+                        # the highlight on the selected row - so it only ever drew on one row.
+                        # Here it is a divider, a cell background or a colour strip, and it has
+                        # to be there on every row.
+                        Visible: =true
                         Width: =Parent.TemplateWidth
                         Y: =Parent.TemplateHeight - 1
             - conBookingsFilter:
@@ -1286,6 +1298,10 @@ Screens:
                         OnSelect: |-
                           =Set(varCurrentBooking, ThisItem);
                           Navigate(scr_BookingDetail, ScreenTransition.Fade)
-                        Visible: =ThisItem.IsSelected
+                        # Always. This came from the browse template, where the rectangle is
+                        # the highlight on the selected row - so it only ever drew on one row.
+                        # Here it is a divider, a cell background or a colour strip, and it has
+                        # to be there on every row.
+                        Visible: =true
                         Width: =Parent.TemplateWidth
                         Y: =Parent.TemplateHeight - 1

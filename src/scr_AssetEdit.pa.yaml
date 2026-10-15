@@ -2181,7 +2181,11 @@ Screens:
                               Set(varEdNext, ThisItem.CellDate)
                           );
                           Set(varEdPick, "")
-                        Visible: =ThisItem.IsSelected
+                        # Always. This came from the browse template, where the rectangle is
+                        # the highlight on the selected row - so it only ever drew on one row.
+                        # Here it is a divider, a cell background or a colour strip, and it has
+                        # to be there on every row.
+                        Visible: =true
                         Width: =Parent.TemplateWidth - 2
                         X: =1
                         Y: =1

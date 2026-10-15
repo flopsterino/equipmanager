@@ -809,7 +809,11 @@ Screens:
                                 =Set(varCurrentAsset, ThisItem);
                                 Set(varAssetFromSetup, false);
                                 Navigate(scr_AssetDetail, ScreenTransition.Fade)
-                              Visible: =ThisItem.IsSelected
+                              # Always. This came from the browse template, where the rectangle is
+                              # the highlight on the selected row - so it only ever drew on one row.
+                              # Here it is a divider, a cell background or a colour strip, and it has
+                              # to be there on every row.
+                              Visible: =true
                               Width: =4
                               Y: =4
                         - Title1:
@@ -973,7 +977,11 @@ Screens:
                                 =Set(varCurrentAsset, ThisItem);
                                 Set(varAssetFromSetup, false);
                                 Navigate(scr_AssetDetail, ScreenTransition.Fade)
-                              Visible: =ThisItem.IsSelected
+                              # Always. This came from the browse template, where the rectangle is
+                              # the highlight on the selected row - so it only ever drew on one row.
+                              # Here it is a divider, a cell background or a colour strip, and it has
+                              # to be there on every row.
+                              Visible: =true
                               Width: =Parent.TemplateWidth
                               Y: =Parent.TemplateHeight - 1
                   - galSetups:
@@ -1088,7 +1096,11 @@ Screens:
                               OnSelect: |-
                                 =Set(varCurrentSetup, ThisItem);
                                 Navigate(scr_SetupDetail, ScreenTransition.Fade)
-                              Visible: =ThisItem.IsSelected
+                              # Always. This came from the browse template, where the rectangle is
+                              # the highlight on the selected row - so it only ever drew on one row.
+                              # Here it is a divider, a cell background or a colour strip, and it has
+                              # to be there on every row.
+                              Visible: =true
                               Width: =Parent.TemplateWidth
                               Y: =Parent.TemplateHeight - 1
             - FooterContainer1:

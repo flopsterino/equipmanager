@@ -333,7 +333,11 @@ Screens:
                               BorderColor: =RGBA(0, 0, 0, 0)
                               Fill: =RGBA(233, 237, 243, 1)
                               Height: =1
-                              Visible: =ThisItem.IsSelected
+                              # Always. This came from the browse template, where the rectangle is
+                              # the highlight on the selected row - so it only ever drew on one row.
+                              # Here it is a divider, a cell background or a colour strip, and it has
+                              # to be there on every row.
+                              Visible: =true
                               Width: =Parent.TemplateWidth
                               Y: =Parent.TemplateHeight - 1
             - FooterContainerMove:
@@ -944,7 +948,11 @@ Screens:
                               )
                           );
                           Reset(txtMoveSearch)
-                        Visible: =ThisItem.IsSelected
+                        # Always. This came from the browse template, where the rectangle is
+                        # the highlight on the selected row - so it only ever drew on one row.
+                        # Here it is a divider, a cell background or a colour strip, and it has
+                        # to be there on every row.
+                        Visible: =true
                         Width: =Parent.TemplateWidth
                         Y: =Parent.TemplateHeight - 1
                   - btnAddSetup:
@@ -1117,7 +1125,11 @@ Screens:
                               Notify(ThisItem.Titel & " added.", NotificationType.Success);
                               Reset(txtMoveSearch)
                           )
-                        Visible: =ThisItem.IsSelected
+                        # Always. This came from the browse template, where the rectangle is
+                        # the highlight on the selected row - so it only ever drew on one row.
+                        # Here it is a divider, a cell background or a colour strip, and it has
+                        # to be there on every row.
+                        Visible: =true
                         Width: =Parent.TemplateWidth
                         Y: =Parent.TemplateHeight - 1
                   - icoAddAsset:

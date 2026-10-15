@@ -1,0 +1,311 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  scr_Tickets:
+    Properties:
+      Fill: =RGBA(255, 255, 255, 1)
+      LoadingSpinnerColor: =RGBA(0, 120, 212, 1)
+    Children:
+      - conTickets:
+          Control: GroupContainer@1.5.0
+          Variant: AutoLayout
+          Properties:
+            Height: =Parent.Height
+            LayoutAlignItems: =LayoutAlignItems.Center
+            LayoutDirection: =LayoutDirection.Vertical
+            PaddingBottom: =8
+            PaddingLeft: =8
+            PaddingRight: =8
+            PaddingTop: =8
+            Width: =Parent.Width
+          Children:
+            - conTicketsHeader:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  FillPortions: =0
+                  Height: =70
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutGap: =12
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  PaddingBottom: =8
+                  PaddingLeft: =8
+                  PaddingRight: =8
+                  PaddingTop: =8
+                  Width: =Parent.Width
+                Children:
+                  - icoTicketsBack:
+                      Control: Classic/Icon@2.5.0
+                      Properties:
+                        AccessibleLabel: ="Back to home"
+                        BorderColor: =RGBA(0, 0, 0, 0)
+                        Color: =RGBA(96, 94, 92, 1)
+                        DisabledBorderColor: =RGBA(245, 245, 245, 1)
+                        DisabledColor: =RGBA(225, 223, 221, 1)
+                        DisabledFill: =RGBA(0, 0, 0, 0)
+                        FocusedBorderThickness: =4
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 0, 0, 0)
+                        HoverColor: =RGBA(16, 110, 190, 1)
+                        HoverFill: =RGBA(0, 0, 0, 0)
+                        Icon: =Icon.BackArrow
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        OnSelect: =Navigate(scr_Home, ScreenTransition.Fade)
+                        PressedBorderColor: =RGBA(0, 0, 0, 0)
+                        PressedColor: =RGBA(16, 110, 190, 1)
+                        PressedFill: =RGBA(0, 0, 0, 0)
+                        Tooltip: ="Back"
+                        Width: =36
+                        X: =010
+                        Y: =(Parent.Height - Self.Height) / 2
+                  - lblTicketsTitle:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(50, 49, 48, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        FillPortions: =1
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =Self.Size * 2.9
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        PaddingBottom: =0
+                        PaddingLeft: =12
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =If(Parent.Width < 400, 16, If(Parent.Width < 600, 18, 20))
+                        Text: ="Issues"
+                        Width: =Parent.Width
+                        X: =103
+                  - btnNewTicket:
+                      Control: Classic/Button@2.2.0
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 0)
+                        BorderStyle: =BorderStyle.None
+                        Color: =RGBA(255, 255, 255, 1)
+                        DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        DisabledFill: =RGBA(242, 242, 241, 0)
+                        Fill: =RGBA(0, 120, 212, 1)
+                        Font: =Font.'Segoe UI'
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 0, 0, 0)
+                        HoverColor: =RGBA(255, 255, 255, 1)
+                        HoverFill: =RGBA(16, 110, 190, 1)
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        OnSelect: |-
+                          =Set(varCurrentTicket, Blank());
+                          Set(varCurrentAsset, Blank());
+                          Navigate(scr_TicketDetail, ScreenTransition.Fade)
+                        PressedBorderColor: =RGBA(0, 69, 120, 1)
+                        PressedColor: =RGBA(255, 255, 255, 1)
+                        PressedFill: =RGBA(16, 110, 190, 1)
+                        RadiusBottomLeft: =4
+                        RadiusBottomRight: =4
+                        RadiusTopLeft: =4
+                        RadiusTopRight: =4
+                        Size: =12
+                        Text: ="+ New issue"
+            - conTicketsFilter:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  FillPortions: =0
+                  Height: =56
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutGap: =12
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  PaddingBottom: =8
+                  PaddingLeft: =8
+                  PaddingRight: =8
+                  PaddingTop: =8
+                  Width: =Parent.Width
+                Children:
+                  - drpTicketFilter:
+                      Control: Classic/DropDown@2.3.1
+                      Properties:
+                        BorderColor: =RGBA(219, 219, 219, 1)
+                        ChevronBackground: =RGBA(245, 245, 245, 1)
+                        ChevronDisabledBackground: =RGBA(242, 242, 241, 0)
+                        ChevronDisabledFill: =RGBA(161, 159, 157, 1)
+                        ChevronFill: =RGBA(50, 49, 48, 1)
+                        ChevronHoverBackground: =RGBA(245, 245, 245, 1)
+                        ChevronHoverFill: =RGBA(50, 49, 48, 1)
+                        Color: =RGBA(50, 49, 48, 1)
+                        Default: ="Unresolved"
+                        DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        DisabledFill: =RGBA(242, 242, 241, 0)
+                        Font: =Font.'Segoe UI'
+                        Height: =38
+                        HoverBorderColor: =RGBA(16, 110, 190, 1)
+                        HoverColor: =RGBA(50, 49, 48, 1)
+                        HoverFill: =RGBA(245, 245, 245, 1)
+                        Items: =["Unresolved", "My reports", "All"]
+                        Items.Value: =Value
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        PaddingBottom: =5
+                        PaddingLeft: =12
+                        PaddingRight: =5
+                        PaddingTop: =5
+                        PressedBorderColor: =RGBA(16, 110, 190, 1)
+                        PressedColor: =RGBA(255, 255, 255, 1)
+                        PressedFill: =RGBA(0, 120, 212, 1)
+                        SelectionColor: =RGBA(50, 49, 48, 1)
+                        SelectionFill: =RGBA(0, 120, 212, 1)
+                        Width: =240
+            - galTickets:
+                Control: Gallery@2.15.0
+                Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  BorderColor: =RGBA(245, 245, 245, 1)
+                  Height: =Parent.Height
+                  Items: |-
+                    =Sort(
+                        Filter(
+                            Equipment_Tickets,
+                            drpTicketFilter.Selected.Value = "All"
+                                || (drpTicketFilter.Selected.Value = "Unresolved" && IsBlank(ResolvedDate))
+                                || (drpTicketFilter.Selected.Value = "My reports"
+                                    && ReportedBy.Email = User().Email)
+                        ),
+                        ReportedDate,
+                        SortOrder.Descending
+                    )
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  TemplateSize: =If(Parent.Width < 600, 88, 70)
+                  Width: =Parent.Width - 16
+                Children:
+                  - lblTkLine1:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(50, 49, 48, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =If(Parent.TemplateWidth < 600, 38, 24)
+                        OnSelect: |-
+                          =Set(varCurrentTicket, ThisItem);
+                          Navigate(scr_TicketDetail, ScreenTransition.Fade)
+                        PaddingBottom: =0
+                        PaddingLeft: =8
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Text: |-
+                          =Coalesce(ThisItem.Title, "?") & "   -   " &
+                           Coalesce(LookUp(Equipment_Assets, Titel = ThisItem.Title).DeviceName, "")
+                        Width: =Parent.TemplateWidth - 140
+                        X: =8
+                        Y: =6
+                  - lblTkLine2:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(96, 94, 92, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =If(ThisItem.IsSelected, FontWeight.Semibold, FontWeight.Normal)
+                        Height: =20
+                        OnSelect: |-
+                          =Set(varCurrentTicket, ThisItem);
+                          Navigate(scr_TicketDetail, ScreenTransition.Fade)
+                        PaddingBottom: =0
+                        PaddingLeft: =8
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =11
+                        Text: =Left(Coalesce(ThisItem.Description, ""), 90)
+                        Width: =Parent.TemplateWidth - 140
+                        Wrap: =false
+                        X: =8
+                        Y: =lblTkLine1.Y + lblTkLine1.Height
+                  - lblTkLine3:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(161, 159, 157, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =If(ThisItem.IsSelected, FontWeight.Semibold, FontWeight.Normal)
+                        Height: =18
+                        OnSelect: |-
+                          =Set(varCurrentTicket, ThisItem);
+                          Navigate(scr_TicketDetail, ScreenTransition.Fade)
+                        PaddingBottom: =0
+                        PaddingLeft: =8
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =10
+                        Text: |-
+                          =Coalesce(ThisItem.ReportedBy.DisplayName, "?") &
+                           If(IsBlank(ThisItem.ReportedDate), "", "  on " & Text(ThisItem.ReportedDate, DateTimeFormat.ShortDate)) &
+                           "   |   " & Coalesce(ThisItem.TypeMaintenance.Value, "")
+                        Width: =Parent.TemplateWidth - 140
+                        Wrap: =false
+                        X: =8
+                        Y: =lblTkLine2.Y + lblTkLine2.Height
+                  - lblTkSeverityBadge:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(255, 255, 255, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        Fill: |-
+                          =If(
+                              !IsBlank(ThisItem.ResolvedDate),
+                              RGBA(16, 124, 16, 1),
+                              RGBA(196, 89, 17, 1)
+                          )
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =If(ThisItem.IsSelected, FontWeight.Semibold, FontWeight.Normal)
+                        Height: =24
+                        OnSelect: |-
+                          =Set(varCurrentTicket, ThisItem);
+                          Navigate(scr_TicketDetail, ScreenTransition.Fade)
+                        PaddingBottom: =0
+                        PaddingLeft: =12
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =10
+                        Text: |-
+                          =If(
+                              !IsBlank(ThisItem.ResolvedDate),
+                              "Resolved",
+                              Coalesce(ThisItem.Severity.Value, "Open")
+                          )
+                        Width: =110
+                        Wrap: =false
+                        X: =Parent.TemplateWidth - Self.Width - 16
+                        Y: =(Parent.TemplateHeight / 2) - (Self.Height / 2)
+                  - recTkSep:
+                      Control: Rectangle@2.3.0
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 0)
+                        Fill: =RGBA(240, 240, 240, 1)
+                        Height: =1
+                        OnSelect: |-
+                          =Set(varCurrentTicket, ThisItem);
+                          Navigate(scr_TicketDetail, ScreenTransition.Fade)
+                        Visible: =ThisItem.IsSelected
+                        Width: =Parent.TemplateWidth
+                        Y: =Parent.TemplateHeight - 1

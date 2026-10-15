@@ -1,0 +1,1181 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  scr_Move:
+    Properties:
+      Fill: =RGBA(255, 255, 255, 1)
+      LoadingSpinnerColor: =RGBA(0, 120, 212, 1)
+    Children:
+      - ScreenContainerMove:
+          Control: GroupContainer@1.5.0
+          Variant: AutoLayout
+          Properties:
+            Height: =Parent.Height
+            LayoutAlignItems: =LayoutAlignItems.Center
+            LayoutDirection: =LayoutDirection.Vertical
+            PaddingBottom: =8
+            PaddingLeft: =8
+            PaddingRight: =8
+            PaddingTop: =8
+            Width: =Parent.Width
+          Children:
+            - HeaderContainerMove:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  FillPortions: =0
+                  Height: =100
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutGap: =12
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  PaddingBottom: =8
+                  PaddingLeft: =8
+                  PaddingRight: =8
+                  PaddingTop: =8
+                  Width: =Parent.Width
+                Children:
+                  - icoBack:
+                      Control: Classic/Icon@2.5.0
+                      Properties:
+                        AccessibleLabel: ="Back to home screen"
+                        BorderColor: =RGBA(0, 0, 0, 0)
+                        Color: =RGBA(96, 94, 92, 1)
+                        DisabledBorderColor: =RGBA(245, 245, 245, 1)
+                        DisabledColor: =RGBA(225, 223, 221, 1)
+                        DisabledFill: =RGBA(0, 0, 0, 0)
+                        FocusedBorderThickness: =4
+                        Height: =40
+                        HoverBorderColor: =RGBA(0, 0, 0, 0)
+                        HoverColor: =RGBA(16, 110, 190, 1)
+                        HoverFill: =RGBA(0, 0, 0, 0)
+                        Icon: =Icon.BackArrow
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        OnSelect: |-
+                          =Reset(txtMoveSearch);
+                          Navigate(scr_Home, ScreenTransition.Fade)
+                        PressedBorderColor: =RGBA(0, 0, 0, 0)
+                        PressedColor: =RGBA(16, 110, 190, 1)
+                        PressedFill: =RGBA(0, 0, 0, 0)
+                        Tooltip: ="Back"
+                        Width: =40
+                        X: =010
+                        Y: =(Parent.Height - Self.Height) / 2
+                  - txtMoveSearch:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(219, 219, 219, 1)
+                        Color: =RGBA(50, 49, 48, 1)
+                        Default: =""
+                        DelayOutput: =true
+                        DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        DisabledFill: =RGBA(242, 242, 241, 0)
+                        FillPortions: =1
+                        Font: =Font.'Segoe UI'
+                        Height: =44
+                        HintText: =If(Parent.Width < 600, "Search ID, serial, device or setup", "Search by Asset ID, UA number, serial, device, manufacturer or Setup ID")
+                        HoverBorderColor: =RGBA(16, 110, 190, 1)
+                        HoverColor: =RGBA(50, 49, 48, 1)
+                        HoverFill: =RGBA(255, 255, 255, 1)
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        PressedBorderColor: =RGBA(0, 120, 212, 1)
+                        PressedColor: =RGBA(50, 49, 48, 1)
+                        PressedFill: =RGBA(255, 255, 255, 1)
+                        RadiusBottomLeft: =4
+                        RadiusBottomRight: =4
+                        RadiusTopLeft: =4
+                        RadiusTopRight: =4
+                        Size: =14
+                        Width: =Parent.Width - Self.X - 130
+                        Y: =(Parent.Height - Self.Height) / 2
+                  - BarcodeReader2:
+                      Control: BarcodeReader@1.0.25
+                      Properties:
+                        FillColor: =RGBA(0, 120, 212, 1)
+                        FontSize: =14
+                        Height: =60
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        OnScan: |-
+                          =Set(varScanCode, Trim(First(Self.Barcodes).Value));
+                          Set(
+                              varScanAsset,
+                              LookUp(
+                                  Equipment_Assets,
+                                  Titel = varScanCode || UANumber = varScanCode || SerialNumber = varScanCode
+                              )
+                          );
+                          Set(varScanSetup, LookUp(Equipment_Setups, Titel = varScanCode));
+                          Set(
+                              varScanSetupNew,
+                              Filter(
+                                  Filter(Equipment_Assets, varScanCode in Setups.Value),
+                                  Not('Id (ID)' in colMoveBuffer.'Id (ID)')
+                              )
+                          );
+                          If(
+                              // 1. An individual asset, already queued
+                              !IsBlank(varScanAsset.'Id (ID)') && varScanAsset.'Id (ID)' in colMoveBuffer.'Id (ID)',
+                              Notify(
+                                  "Asset " & varScanCode & " is already in the move list.",
+                                  NotificationType.Warning
+                              ),
+                              !IsBlank(varScanAsset.'Id (ID)'),
+                              Collect(colMoveBuffer, varScanAsset);
+                              Notify("Asset " & varScanCode & " added.", NotificationType.Success),
+                              // 2. No asset, so try a setup: Equipment_Setups.Title is the SetupID
+                              !IsBlank(varScanSetup.'Id (ID)'),
+                              Collect(colMoveBuffer, varScanSetupNew);
+                              Notify(
+                                  "Setup " & varScanCode & " and all linked assets added.",
+                                  NotificationType.Success
+                              ),
+                              // 3. Nothing found
+                              Notify(
+                                  "Code " & varScanCode & " not found in assets or setups.",
+                                  NotificationType.Error
+                              )
+                          )
+                        ScanningMode: ='BarcodeReader.ScanningMode'.AutomaticallyScan
+                        Text: ="Scan"
+                        Width: =140
+                        X: =Parent.Width - Self.Width - 10
+                        Y: =(Parent.Height - Self.Height) / 2
+            - BufferBarContainer:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  FillPortions: =0
+                  Height: =44
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutGap: =12
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  PaddingBottom: =8
+                  PaddingLeft: =16
+                  PaddingRight: =16
+                  PaddingTop: =8
+                  Width: =Parent.Width
+                Children:
+                  - lblBufferCount:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(50, 49, 48, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        FillPortions: =1
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =Self.Size * 4.2
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        PaddingBottom: =0
+                        PaddingLeft: =12
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Text: |-
+                          =If(
+                              IsEmpty(colMoveBuffer),
+                              "No items selected yet",
+                              CountRows(colMoveBuffer) & If(CountRows(colMoveBuffer) = 1, " item", " items") & " ready to move"
+                          )
+                        Width: =Parent.Width
+                        X: =103
+                  - btnClearBuffer:
+                      Control: Classic/Button@2.2.0
+                      Properties:
+                        BorderColor: =RGBA(219, 219, 219, 1)
+                        BorderStyle: =BorderStyle.None
+                        BorderThickness: =1
+                        Color: =RGBA(96, 94, 92, 1)
+                        DisabledBorderColor: =RGBA(240, 240, 240, 1)
+                        DisabledColor: =RGBA(200, 198, 196, 1)
+                        DisabledFill: =RGBA(0, 0, 0, 0)
+                        DisplayMode: =If(IsEmpty(colMoveBuffer), DisplayMode.Disabled, DisplayMode.Edit)
+                        Fill: =RGBA(0, 0, 0, 0)
+                        Font: =Font.'Segoe UI'
+                        Height: =32
+                        HoverBorderColor: =RGBA(0, 0, 0, 0)
+                        HoverColor: =RGBA(168, 0, 0, 1)
+                        HoverFill: =RGBA(253, 231, 233, 1)
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        OnSelect: =Clear(colMoveBuffer)
+                        PressedBorderColor: =RGBA(0, 69, 120, 1)
+                        PressedColor: =RGBA(255, 255, 255, 1)
+                        PressedFill: =RGBA(16, 110, 190, 1)
+                        RadiusBottomLeft: =0
+                        RadiusBottomRight: =0
+                        RadiusTopLeft: =0
+                        RadiusTopRight: =0
+                        Size: =12
+                        Text: ="Clear list"
+                        Width: =130
+            - GalleryContainerMove:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  Height: =Parent.Height
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  PaddingBottom: =8
+                  PaddingLeft: =8
+                  PaddingRight: =8
+                  PaddingTop: =8
+                  Width: =Parent.Width
+                Children:
+                  - galMoveItems:
+                      Control: Gallery@2.15.0
+                      Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        BorderColor: =RGBA(245, 245, 245, 1)
+                        FillPortions: =0
+                        Height: =Parent.Height - 16
+                        Items: =colMoveBuffer
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        TemplateSize: =If(Parent.Width < 600, 90, 72)
+                        Width: =Parent.Width - 16
+                      Children:
+                        - lblBufTitle:
+                            Control: Label@2.5.1
+                            Properties:
+                              BorderColor: =RGBA(0, 0, 0, 1)
+                              Color: =RGBA(50, 49, 48, 1)
+                              DisabledColor: =RGBA(161, 159, 157, 1)
+                              Font: =Font.'Segoe UI'
+                              FontWeight: =FontWeight.Semibold
+                              Height: =If(Parent.TemplateWidth < 600, 38, 24)
+                              PaddingBottom: =0
+                              PaddingLeft: =4
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Size: =14
+                              Text: |-
+                                =ThisItem.Titel & " - " & ThisItem.DeviceName &
+                                If(
+                                    IsBlank(ThisItem.Manufacturer),
+                                    "",
+                                    "  (" & ThisItem.Manufacturer & ")"
+                                )
+                              Width: =Parent.TemplateWidth - 80
+                              X: =16
+                              Y: =12
+                        - lblBufSubtitle:
+                            Control: Label@2.5.1
+                            Properties:
+                              BorderColor: =RGBA(0, 0, 0, 1)
+                              Color: =RGBA(96, 94, 92, 1)
+                              DisabledColor: =RGBA(161, 159, 157, 1)
+                              Font: =Font.'Segoe UI'
+                              FontWeight: =If(ThisItem.IsSelected, FontWeight.Semibold, FontWeight.Normal)
+                              Height: =22
+                              PaddingBottom: =0
+                              PaddingLeft: =4
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Size: =11
+                              Text: |-
+                                ="Now: " & Coalesce(ThisItem.CurrentCampus.Value, "?") & " / " & Coalesce(ThisItem.'CurrentLocation (CurrentLocation0)'.Value, "?") &
+                                 If(
+                                     IsEmpty(ThisItem.Setups),
+                                     "",
+                                     "   |   Setup: " & Concat(ThisItem.Setups, Value, ", ")
+                                 )
+                              Width: =Parent.TemplateWidth - 80
+                              Wrap: =false
+                              X: =16
+                              Y: =lblBufTitle.Y + lblBufTitle.Height
+                        - icoRemoveFromBuffer:
+                            Control: Classic/Icon@2.5.0
+                            Properties:
+                              AccessibleLabel: ="Remove this item from the move list"
+                              BorderColor: =RGBA(0, 0, 0, 1)
+                              Color: =RGBA(161, 159, 157, 1)
+                              DisabledBorderColor: =RGBA(245, 245, 245, 1)
+                              DisabledColor: =RGBA(225, 223, 221, 1)
+                              DisabledFill: =RGBA(0, 0, 0, 0)
+                              FocusedBorderThickness: =4
+                              Height: =24
+                              HoverBorderColor: =RGBA(0, 0, 0, 0)
+                              HoverColor: =RGBA(168, 0, 0, 1)
+                              HoverFill: =RGBA(0, 0, 0, 0)
+                              Icon: =Icon.Trash
+                              OnSelect: =Remove(colMoveBuffer, ThisItem)
+                              PressedBorderColor: =RGBA(0, 0, 0, 0)
+                              PressedColor: =RGBA(16, 110, 190, 1)
+                              PressedFill: =RGBA(0, 0, 0, 0)
+                              Tooltip: ="Remove"
+                              Width: =24
+                              X: =Parent.TemplateWidth - Self.Width - 20
+                              Y: =(Parent.TemplateHeight / 2) - (Self.Height / 2)
+                        - recBufSeparator:
+                            Control: Rectangle@2.3.0
+                            Properties:
+                              BorderColor: =RGBA(0, 0, 0, 0)
+                              Fill: =RGBA(237, 235, 233, 1)
+                              Height: =1
+                              Visible: =ThisItem.IsSelected
+                              Width: =Parent.TemplateWidth
+                              Y: =Parent.TemplateHeight - 1
+            - FooterContainerMove:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  Fill: =RGBA(250, 250, 250, 1)
+                  FillPortions: =0
+                  Height: =If(Parent.Width < 760, 190, 88)
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutGap: =12
+                  LayoutJustifyContent: =LayoutJustifyContent.Center
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  LayoutWrap: =true
+                  PaddingBottom: =8
+                  PaddingLeft: =8
+                  PaddingRight: =8
+                  PaddingTop: =8
+                  Width: =Parent.Width
+                Children:
+                  - drpTargetLocation:
+                      Control: Classic/DropDown@2.3.1
+                      Properties:
+                        BorderColor: =RGBA(219, 219, 219, 1)
+                        ChevronBackground: =RGBA(245, 245, 245, 1)
+                        ChevronDisabledBackground: =RGBA(242, 242, 241, 0)
+                        ChevronDisabledFill: =RGBA(161, 159, 157, 1)
+                        ChevronFill: =RGBA(50, 49, 48, 1)
+                        ChevronHoverBackground: =RGBA(245, 245, 245, 1)
+                        ChevronHoverFill: =RGBA(50, 49, 48, 1)
+                        Color: =RGBA(50, 49, 48, 1)
+                        DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        DisabledFill: =RGBA(242, 242, 241, 0)
+                        Font: =Font.'Segoe UI'
+                        Height: =44
+                        HoverBorderColor: =RGBA(16, 110, 190, 1)
+                        HoverColor: =RGBA(50, 49, 48, 1)
+                        HoverFill: =RGBA(255, 255, 255, 1)
+                        Items: =Choices(Equipment_Assets.'CurrentLocation (CurrentLocation0)')
+                        Items.Value: =Value
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        PaddingBottom: =5
+                        PaddingLeft: =12
+                        PaddingRight: =5
+                        PaddingTop: =5
+                        PressedBorderColor: =RGBA(16, 110, 190, 1)
+                        PressedColor: =RGBA(255, 255, 255, 1)
+                        PressedFill: =RGBA(0, 120, 212, 1)
+                        SelectionColor: =RGBA(50, 49, 48, 1)
+                        SelectionFill: =RGBA(0, 120, 212, 1)
+                        Width: =If(Parent.Width < 760, Parent.Width - 32, 220)
+                  - lblDerivedCampusValue:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(50, 49, 48, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        Font: =Font.'Segoe UI'
+                        Height: =1
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        PaddingBottom: =0
+                        PaddingLeft: =12
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =14
+                        Text: |-
+                          =Coalesce(
+                              LookUp(
+                                  Equipment_Assets,
+                                  'CurrentLocation (CurrentLocation0)'.Value = drpTargetLocation.Selected.Value
+                              ).CurrentCampus.Value,
+                              LookUp(
+                                  Equipment_Setups,
+                                  CurrentLocation.Value = drpTargetLocation.Selected.Value
+                              ).CurrentCampus.Value,
+                              ""
+                          )
+                        VerticalAlign: =VerticalAlign.Top
+                        Visible: =false
+                        Width: =1
+                        X: =103
+                  - lblRoomListProblem:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(50, 49, 48, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        Font: =Font.'Segoe UI'
+                        Height: =1
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        PaddingBottom: =0
+                        PaddingLeft: =12
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =14
+                        Text: |-
+                          =With(
+                              {
+                                  room: drpTargetLocation.Selected.Value,
+                                  campus: lblDerivedCampusValue.Text,
+                                  movingASetup: !IsEmpty(Filter(colMoveBuffer, !IsEmpty(Setups)))
+                              },
+                              If(
+                                  IsBlank(room),
+                                      "",
+                                  IsBlank(
+                                      LookUp(
+                                          Choices(Equipment_MovementLog.ToLocation),
+                                          Value = room
+                                      ).Value
+                                  ),
+                                      "the movement log, ToLocation",
+                                  !IsEmpty(
+                                      Filter(
+                                          Distinct(colMoveBuffer, 'CurrentLocation (CurrentLocation0)'.Value) As src,
+                                          IsBlank(
+                                              LookUp(
+                                                  Choices(Equipment_MovementLog.FromLocation),
+                                                  Value = src.Value
+                                              ).Value
+                                          )
+                                      )
+                                  ),
+                                      "the movement log, FromLocation - a room one of these assets is in now",
+                                  movingASetup && IsBlank(
+                                      LookUp(
+                                          Choices(Equipment_Setups.CurrentLocation),
+                                          Value = room
+                                      ).Value
+                                  ),
+                                      "the setups list, CurrentLocation",
+                                  movingASetup && !IsBlank(campus) && IsBlank(
+                                      LookUp(
+                                          Choices(Equipment_Setups.CurrentCampus),
+                                          Value = campus
+                                      ).Value
+                                  ),
+                                      "the setups list, CurrentCampus",
+                                  ""
+                              )
+                          )
+                        VerticalAlign: =VerticalAlign.Top
+                        Visible: =false
+                        Width: =1
+                        X: =103
+                  - lblMoveBlocker:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(50, 49, 48, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        Font: =Font.'Segoe UI'
+                        Height: =1
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        PaddingBottom: =0
+                        PaddingLeft: =12
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =14
+                        Text: |-
+                          =If(
+                              IsEmpty(colMoveBuffer),
+                                  "Add at least one asset or setup to the move list first.",
+                              IsBlank(drpTargetLocation.Selected.Value),
+                                  "Choose the room to move to.",
+                              !IsBlank(lblRoomListProblem.Text),
+                                  "Cannot record this move: a value is missing from "
+                                      & lblRoomListProblem.Text & ". Add it there first.",
+                              ""
+                          )
+                        VerticalAlign: =VerticalAlign.Top
+                        Visible: =false
+                        Width: =1
+                        X: =103
+                  - lblDerivedCampus:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: |-
+                          =If(
+                              !IsBlank(lblRoomListProblem.Text),
+                              RGBA(168, 0, 0, 1),
+                              IsBlank(lblDerivedCampusValue.Text),
+                                  RGBA(161, 159, 157, 1),
+                              RGBA(96, 94, 92, 1)
+                          )
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        Font: =Font.'Segoe UI'
+                        Height: =44
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        PaddingBottom: =0
+                        PaddingLeft: =12
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =11
+                        Text: |-
+                          =If(
+                              IsBlank(drpTargetLocation.Selected.Value),
+                              "",
+                              !IsBlank(lblRoomListProblem.Text),
+                                  "Cannot record this move: a value is missing from " & lblRoomListProblem.Text & ". Add it there first.",
+                              IsBlank(lblDerivedCampusValue.Text),
+                                  "Campus unknown for this room, stays unchanged",
+                              "Campus will be " & lblDerivedCampusValue.Text
+                          )
+                        Width: =If(Parent.Width < 760, Parent.Width - 32, 230)
+                        X: =103
+                  - btnConfirmMove:
+                      Control: Classic/Button@2.2.0
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 0)
+                        BorderStyle: =BorderStyle.None
+                        Color: =RGBA(255, 255, 255, 1)
+                        DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        DisabledFill: =RGBA(237, 235, 233, 1)
+                        Fill: =RGBA(0, 120, 212, 1)
+                        Font: =Font.'Segoe UI'
+                        Height: =44
+                        HoverBorderColor: =RGBA(0, 0, 0, 0)
+                        HoverColor: =RGBA(255, 255, 255, 1)
+                        HoverFill: =RGBA(16, 110, 190, 1)
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        OnSelect: |-
+                          =Set(varMvBlocked, !IsBlank(lblMoveBlocker.Text));
+                          Set(varMvRoom, drpTargetLocation.Selected.Value);
+                          Set(varMvCampus, lblDerivedCampusValue.Text);
+                          Set(varMvAction, If(CountRows(colMoveBuffer) > 1, "Bulk Move", "Relocation"));
+                          If(
+                              varMvBlocked,
+                              Notify(lblMoveBlocker.Text, NotificationType.Warning),
+
+                              Notify(
+                                  "Moving " & CountRows(colMoveBuffer) & " item(s) to " & varMvRoom & "...",
+                                  NotificationType.Information
+                              );
+
+                              // 1. Log first: FromLocation has to hold the OLD room.
+                              ForAll(
+                                  colMoveBuffer As buffered,
+                                  Patch(
+                                      Equipment_MovementLog,
+                                      Defaults(Equipment_MovementLog),
+                                      {
+                                          Title: buffered.Titel,
+                                          FromLocation: { Value: buffered.'CurrentLocation (CurrentLocation0)'.Value },
+                                          ToLocation: { Value: varMvRoom },
+                                          MovedBy: {
+                                              '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
+                                              Claims: "i:0#.f|membership|" & Lower(User().Email),
+                                              DisplayName: User().FullName,
+                                              Email: User().Email,
+                                              Department: "",
+                                              JobTitle: "",
+                                              Picture: ""
+                                          },
+                                          ActionType: { Value: varMvAction },
+                                          TimeStamp: Now()
+                                      }
+                                  )
+                              );
+
+                              // 2. Then the assets. LookUp by ID hands Patch a real Equipment_Assets
+                              //    record; the buffered row comes from a collection whose schema is
+                              //    merged from several Collect() calls.
+                              ForAll(
+                                  colMoveBuffer As buffered,
+                                  Patch(
+                                      Equipment_Assets,
+                                      LookUp(Equipment_Assets, 'Id (ID)' = buffered.'Id (ID)'),
+                                      {
+                                          'CurrentLocation (CurrentLocation0)': { Value: varMvRoom },
+                                          CurrentCampus: {
+                                              Value: Coalesce(varMvCampus, buffered.CurrentCampus.Value)
+                                          },
+                                          LastRelocatedBy: {
+                                              '@odata.type': "#Microsoft.Azure.Connectors.SharePoint.SPListExpandedUser",
+                                              Claims: "i:0#.f|membership|" & Lower(User().Email),
+                                              DisplayName: User().FullName,
+                                              Email: User().Email,
+                                              Department: "",
+                                              JobTitle: "",
+                                              Picture: ""
+                                          },
+                                          LastUpdated: Now()
+                                      }
+                                  )
+                              );
+
+                              // 3. A setup that came along would otherwise still point at the old room.
+                              ForAll(
+                                  // Each queued asset carries a table of setups, so they are
+                                  // flattened into one list of titles before being deduplicated.
+                                  Distinct(
+                                      Ungroup(
+                                          ForAll(colMoveBuffer As a, { setups: a.Setups }),
+                                          setups),
+                                      Value
+                                  ) As s,
+                                  If(
+                                      !IsBlank(LookUp(Equipment_Setups, Titel = s.Value).'Id (ID)'),
+                                      Patch(
+                                          Equipment_Setups,
+                                          LookUp(Equipment_Setups, Titel = s.Value),
+                                          {
+                                              CurrentLocation: { Value: varMvRoom },
+                                              CurrentCampus: {
+                                                  Value: Coalesce(
+                                                      varMvCampus,
+                                                      LookUp(Equipment_Setups, Titel = s.Value).CurrentCampus.Value
+                                                  )
+                                              }
+                                          }
+                                      )
+                                  )
+                              );
+
+                              // 4. Say what happened, either way.
+                              Set(
+                                  varMvOk,
+                                  IsEmpty(Errors(Equipment_Assets))
+                                      && IsEmpty(Errors(Equipment_MovementLog))
+                                      && IsEmpty(Errors(Equipment_Setups))
+                              );
+                              If(
+                                  varMvOk,
+                                  Clear(colMoveBuffer);
+                                  Reset(drpTargetLocation);
+                                  Notify("Move saved.", NotificationType.Success),
+                                  Notify(
+                                      "Save failed: " & Trim(
+                                          Concat(Errors(Equipment_Assets), Message, " | ") & " " &
+                                          Concat(Errors(Equipment_MovementLog), Message, " | ") & " " &
+                                          Concat(Errors(Equipment_Setups), Message, " | ")
+                                      ),
+                                      NotificationType.Error
+                                  )
+                              )
+                          )
+                        PressedBorderColor: =RGBA(0, 69, 120, 1)
+                        PressedColor: =RGBA(255, 255, 255, 1)
+                        PressedFill: =RGBA(0, 69, 120, 1)
+                        RadiusBottomLeft: =4
+                        RadiusBottomRight: =4
+                        RadiusTopLeft: =4
+                        RadiusTopRight: =4
+                        Size: =14
+                        Text: ="Confirm move"
+                        Width: =If(Parent.Width < 760, Parent.Width - 32, 220)
+      - conSearchOverlay:
+          Control: GroupContainer@1.5.0
+          Variant: AutoLayout
+          Properties:
+            BorderColor: =RGBA(200, 198, 196, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =Min(560, Parent.Height - 230)
+            LayoutAlignItems: =LayoutAlignItems.Center
+            LayoutDirection: =LayoutDirection.Vertical
+            PaddingBottom: =8
+            PaddingLeft: =8
+            PaddingRight: =8
+            PaddingTop: =8
+            RadiusBottomLeft: =6
+            RadiusBottomRight: =6
+            RadiusTopLeft: =6
+            RadiusTopRight: =6
+            Visible: =!IsBlank(Trim(txtMoveSearch.Text))
+            Width: =Parent.Width - 120
+            X: =60
+            Y: =104
+          Children:
+            - conSearchOverlayHeader:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  FillPortions: =0
+                  Height: =32
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  PaddingBottom: =8
+                  PaddingLeft: =8
+                  PaddingRight: =8
+                  PaddingTop: =8
+                  Width: =Parent.Width - 16
+                Children:
+                  - lblSearchHint:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(96, 94, 92, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        FillPortions: =1
+                        Font: =Font.'Segoe UI'
+                        Height: =Self.Size * 4.2
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        PaddingBottom: =0
+                        PaddingLeft: =12
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =11
+                        Text: ="Click a result to add it to the move list"
+                        Width: =Parent.Width
+                        X: =103
+                  - icoCloseSearch:
+                      Control: Classic/Icon@2.5.0
+                      Properties:
+                        AccessibleLabel: ="Close search results"
+                        BorderColor: =RGBA(0, 0, 0, 0)
+                        Color: =RGBA(96, 94, 92, 1)
+                        DisabledBorderColor: =RGBA(245, 245, 245, 1)
+                        DisabledColor: =RGBA(225, 223, 221, 1)
+                        DisabledFill: =RGBA(0, 0, 0, 0)
+                        FocusedBorderThickness: =4
+                        Height: =20
+                        HoverBorderColor: =RGBA(0, 0, 0, 0)
+                        HoverColor: =RGBA(0, 120, 212, 1)
+                        HoverFill: =RGBA(0, 0, 0, 0)
+                        Icon: =Icon.Cancel
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        OnSelect: =Reset(txtMoveSearch)
+                        PressedBorderColor: =RGBA(0, 0, 0, 0)
+                        PressedColor: =RGBA(16, 110, 190, 1)
+                        PressedFill: =RGBA(0, 0, 0, 0)
+                        Tooltip: ="Close"
+                        Width: =20
+                        X: =010
+                        Y: =(Parent.Height - Self.Height) / 2
+            - lblSetupsHeader:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 1)
+                  Color: =RGBA(96, 94, 92, 1)
+                  DisabledColor: =RGBA(161, 159, 157, 1)
+                  Fill: =RGBA(245, 245, 245, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =26
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  PaddingBottom: =0
+                  PaddingLeft: =12
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  Size: =11
+                  Text: ="SETUPS (all linked assets come along)"
+                  Visible: =CountRows(galSetupResults.AllItems) > 0
+                  Width: =Parent.Width - 16
+                  X: =103
+            - galSetupResults:
+                Control: Gallery@2.15.0
+                Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  BorderColor: =RGBA(245, 245, 245, 1)
+                  FillPortions: =0
+                  Height: |-
+                    =Min(
+                        CountRows(
+                            Filter(
+                                Equipment_Setups,
+                                IsBlank(Trim(txtMoveSearch.Text))
+                                    || !IsBlank(Find(Lower(Trim(txtMoveSearch.Text)), Lower(Coalesce(Titel, ""))))
+                                    || !IsBlank(Find(Lower(Trim(txtMoveSearch.Text)), Lower(Coalesce(SetupName, ""))))
+                            )
+                        ) * 56,
+                        168
+                    )
+                  Items: |-
+                    =With(
+                        { q: Lower(Trim(txtMoveSearch.Text)) },
+                        Filter(
+                            Equipment_Setups,
+                            IsBlank(q)
+                                || !IsBlank(Find(q, Lower(Coalesce(Titel, ""))))
+                                || !IsBlank(Find(q, Lower(Coalesce(SetupName, ""))))
+                        )
+                    )
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  TemplateSize: =If(Parent.Width < 600, 74, 56)
+                  Width: =Parent.Width - 16
+                Children:
+                  - lblSetupResultTitle:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(50, 49, 48, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =If(Parent.TemplateWidth < 600, 36, 22)
+                        OnSelect: |-
+                          =Set(varAddSid, ThisItem.Titel);
+                          Set(
+                              varAddNew,
+                              Filter(
+                                  Filter(Equipment_Assets, varAddSid in Setups.Value),
+                                  Not('Id (ID)' in colMoveBuffer.'Id (ID)')
+                              )
+                          );
+                          If(
+                              CountRows(varAddNew) = 0,
+                              Notify(
+                                  "All assets from setup " & varAddSid & " are already in the list.",
+                                  NotificationType.Warning
+                              ),
+                              Collect(colMoveBuffer, varAddNew);
+                              Notify(
+                                  CountRows(varAddNew) & " asset(s) from setup " & varAddSid & " added.",
+                                  NotificationType.Success
+                              )
+                          );
+                          Reset(txtMoveSearch)
+                        PaddingBottom: =0
+                        PaddingLeft: =4
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Text: =ThisItem.Titel & " - " & ThisItem.SetupName
+                        Width: =Parent.TemplateWidth - 40
+                        X: =12
+                        Y: =6
+                  - lblSetupResultSub:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(96, 94, 92, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =If(ThisItem.IsSelected, FontWeight.Semibold, FontWeight.Normal)
+                        Height: =20
+                        OnSelect: |-
+                          =Set(varAddSid, ThisItem.Titel);
+                          Set(
+                              varAddNew,
+                              Filter(
+                                  Filter(Equipment_Assets, varAddSid in Setups.Value),
+                                  Not('Id (ID)' in colMoveBuffer.'Id (ID)')
+                              )
+                          );
+                          If(
+                              CountRows(varAddNew) = 0,
+                              Notify(
+                                  "All assets from setup " & varAddSid & " are already in the list.",
+                                  NotificationType.Warning
+                              ),
+                              Collect(colMoveBuffer, varAddNew);
+                              Notify(
+                                  CountRows(varAddNew) & " asset(s) from setup " & varAddSid & " added.",
+                                  NotificationType.Success
+                              )
+                          );
+                          Reset(txtMoveSearch)
+                        PaddingBottom: =0
+                        PaddingLeft: =4
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =11
+                        Text: |-
+                          ="Setup  |  " & Coalesce(ThisItem.CurrentCampus.Value, "?") & " / " & Coalesce(ThisItem.CurrentLocation.Value, "?") &
+                           "  |  " & CountRows(Filter(Equipment_Assets, ThisItem.Titel in Setups.Value)) & " asset(s)"
+                        Width: =Parent.TemplateWidth - 40
+                        Wrap: =false
+                        X: =12
+                        Y: =lblSetupResultTitle.Y + lblSetupResultTitle.Height
+                  - recSetupRowSep:
+                      Control: Rectangle@2.3.0
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 0)
+                        Fill: =RGBA(237, 235, 233, 1)
+                        Height: =1
+                        OnSelect: |-
+                          =Set(varAddSid, ThisItem.Titel);
+                          Set(
+                              varAddNew,
+                              Filter(
+                                  Filter(Equipment_Assets, varAddSid in Setups.Value),
+                                  Not('Id (ID)' in colMoveBuffer.'Id (ID)')
+                              )
+                          );
+                          If(
+                              CountRows(varAddNew) = 0,
+                              Notify(
+                                  "All assets from setup " & varAddSid & " are already in the list.",
+                                  NotificationType.Warning
+                              ),
+                              Collect(colMoveBuffer, varAddNew);
+                              Notify(
+                                  CountRows(varAddNew) & " asset(s) from setup " & varAddSid & " added.",
+                                  NotificationType.Success
+                              )
+                          );
+                          Reset(txtMoveSearch)
+                        Visible: =ThisItem.IsSelected
+                        Width: =Parent.TemplateWidth
+                        Y: =Parent.TemplateHeight - 1
+                  - btnAddSetup:
+                      Control: Classic/Button@2.2.0
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 0)
+                        BorderStyle: =BorderStyle.None
+                        Color: =RGBA(255, 255, 255, 1)
+                        DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        DisabledFill: =RGBA(242, 242, 241, 0)
+                        Fill: =RGBA(0, 120, 212, 1)
+                        Font: =Font.'Segoe UI'
+                        Height: =28
+                        HoverBorderColor: =RGBA(0, 0, 0, 0)
+                        HoverColor: =RGBA(255, 255, 255, 1)
+                        HoverFill: =RGBA(16, 110, 190, 1)
+                        OnSelect: |-
+                          =Set(varAddSid, ThisItem.Titel);
+                          Set(
+                              varAddNew,
+                              Filter(
+                                  Filter(Equipment_Assets, varAddSid in Setups.Value),
+                                  Not('Id (ID)' in colMoveBuffer.'Id (ID)')
+                              )
+                          );
+                          If(
+                              CountRows(varAddNew) = 0,
+                              Notify(
+                                  "All assets from setup " & varAddSid & " are already in the list.",
+                                  NotificationType.Warning
+                              ),
+                              Collect(colMoveBuffer, varAddNew);
+                              Notify(
+                                  CountRows(varAddNew) & " asset(s) from setup " & varAddSid & " added.",
+                                  NotificationType.Success
+                              )
+                          );
+                          Reset(txtMoveSearch)
+                        PressedBorderColor: =RGBA(0, 69, 120, 1)
+                        PressedColor: =RGBA(255, 255, 255, 1)
+                        PressedFill: =RGBA(16, 110, 190, 1)
+                        RadiusBottomLeft: =4
+                        RadiusBottomRight: =4
+                        RadiusTopLeft: =4
+                        RadiusTopRight: =4
+                        Size: =11
+                        Text: ="+ All"
+                        Width: =70
+                        X: =Parent.TemplateWidth - Self.Width - 12
+                        Y: =(Parent.TemplateHeight / 2) - (Self.Height / 2)
+            - lblAssetsHeader:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 1)
+                  Color: =RGBA(96, 94, 92, 1)
+                  DisabledColor: =RGBA(161, 159, 157, 1)
+                  Fill: =RGBA(245, 245, 245, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =26
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  PaddingBottom: =0
+                  PaddingLeft: =12
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  Size: =11
+                  Text: ="INDIVIDUAL ASSETS"
+                  Visible: =CountRows(galAssetResults.AllItems) > 0
+                  Width: =Parent.Width - 16
+                  X: =103
+            - galAssetResults:
+                Control: Gallery@2.15.0
+                Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  BorderColor: =RGBA(245, 245, 245, 1)
+                  Height: =Parent.Height
+                  Items: |-
+                    =With(
+                        { q: Lower(Trim(txtMoveSearch.Text)) },
+                        Filter(
+                            Equipment_Assets,
+                            IsBlank(q)
+                                || !IsBlank(Find(q, Lower(Coalesce(Titel, ""))))
+                                || !IsBlank(Find(q, Lower(Coalesce(DeviceName, ""))))
+                                || !IsBlank(Find(q, Lower(Coalesce(Manufacturer, ""))))
+                                || !IsBlank(Find(q, Lower(Coalesce(SerialNumber, ""))))
+                                || !IsBlank(Find(q, Lower(Coalesce(UANumber, ""))))
+                                || !IsBlank(Find(q, Lower(Concat(Setups, Value, " "))))
+                        )
+                    )
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  TemplateSize: =If(Parent.Width < 600, 74, 56)
+                  Width: =Parent.Width - 16
+                Children:
+                  - lblAssetResultTitle:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(50, 49, 48, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =If(Parent.TemplateWidth < 600, 36, 22)
+                        OnSelect: |-
+                          =If(
+                              ThisItem.'Id (ID)' in colMoveBuffer.'Id (ID)',
+                              Notify("This asset is already in the move list.", NotificationType.Warning),
+                              Collect(colMoveBuffer, ThisItem);
+                              Notify(ThisItem.Titel & " added.", NotificationType.Success);
+                              Reset(txtMoveSearch)
+                          )
+                        PaddingBottom: =0
+                        PaddingLeft: =4
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Text: |-
+                          =ThisItem.Titel & " - " & ThisItem.DeviceName &
+                          If(
+                              IsBlank(ThisItem.Manufacturer),
+                              "",
+                              "  (" & ThisItem.Manufacturer & ")"
+                          )
+                        Width: =Parent.TemplateWidth - 40
+                        X: =12
+                        Y: =6
+                  - lblAssetResultSub:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(96, 94, 92, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =If(ThisItem.IsSelected, FontWeight.Semibold, FontWeight.Normal)
+                        Height: =20
+                        OnSelect: |-
+                          =If(
+                              ThisItem.'Id (ID)' in colMoveBuffer.'Id (ID)',
+                              Notify("This asset is already in the move list.", NotificationType.Warning),
+                              Collect(colMoveBuffer, ThisItem);
+                              Notify(ThisItem.Titel & " added.", NotificationType.Success);
+                              Reset(txtMoveSearch)
+                          )
+                        PaddingBottom: =0
+                        PaddingLeft: =4
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =11
+                        Text: |-
+                          ="SN " & Coalesce(ThisItem.SerialNumber, "-") & "  |  UA " & Coalesce(ThisItem.UANumber, "-") &
+                           "  |  " & Coalesce(ThisItem.CurrentCampus.Value, "?") & " / " & Coalesce(ThisItem.'CurrentLocation (CurrentLocation0)'.Value, "?")
+                        Width: =Parent.TemplateWidth - 40
+                        Wrap: =false
+                        X: =12
+                        Y: =lblAssetResultTitle.Y + lblAssetResultTitle.Height
+                  - recAssetRowSep:
+                      Control: Rectangle@2.3.0
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 0)
+                        Fill: =RGBA(237, 235, 233, 1)
+                        Height: =1
+                        OnSelect: |-
+                          =If(
+                              ThisItem.'Id (ID)' in colMoveBuffer.'Id (ID)',
+                              Notify("This asset is already in the move list.", NotificationType.Warning),
+                              Collect(colMoveBuffer, ThisItem);
+                              Notify(ThisItem.Titel & " added.", NotificationType.Success);
+                              Reset(txtMoveSearch)
+                          )
+                        Visible: =ThisItem.IsSelected
+                        Width: =Parent.TemplateWidth
+                        Y: =Parent.TemplateHeight - 1
+                  - icoAddAsset:
+                      Control: Classic/Icon@2.5.0
+                      Properties:
+                        AccessibleLabel: ="Add this asset to the move list"
+                        BorderColor: =RGBA(0, 0, 0, 0)
+                        Color: |-
+                          =If(
+                              ThisItem.'Id (ID)' in colMoveBuffer.'Id (ID)',
+                              RGBA(16, 124, 16, 1),
+                              RGBA(0, 120, 212, 1)
+                          )
+                        DisabledBorderColor: =RGBA(245, 245, 245, 1)
+                        DisabledColor: =RGBA(225, 223, 221, 1)
+                        DisabledFill: =RGBA(0, 0, 0, 0)
+                        FocusedBorderThickness: =4
+                        Height: =24
+                        HoverBorderColor: =RGBA(0, 0, 0, 0)
+                        HoverColor: =RGBA(16, 110, 190, 1)
+                        HoverFill: =RGBA(0, 0, 0, 0)
+                        Icon: |-
+                          =If(
+                              ThisItem.'Id (ID)' in colMoveBuffer.'Id (ID)',
+                              Icon.CheckBadge,
+                              Icon.AddDocument
+                          )
+                        OnSelect: |-
+                          =If(
+                              ThisItem.'Id (ID)' in colMoveBuffer.'Id (ID)',
+                              Notify("This asset is already in the move list.", NotificationType.Warning),
+                              Collect(colMoveBuffer, ThisItem);
+                              Notify(ThisItem.Titel & " added.", NotificationType.Success);
+                              Reset(txtMoveSearch)
+                          )
+                        PressedBorderColor: =RGBA(0, 0, 0, 0)
+                        PressedColor: =RGBA(16, 110, 190, 1)
+                        PressedFill: =RGBA(0, 0, 0, 0)
+                        Tooltip: ="Add"
+                        Width: =24
+                        X: =Parent.TemplateWidth - Self.Width - 16
+                        Y: =(Parent.TemplateHeight / 2) - (Self.Height / 2)
+            - lblNoResults:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  BorderColor: =RGBA(0, 0, 0, 1)
+                  Color: =RGBA(161, 159, 157, 1)
+                  DisabledColor: =RGBA(161, 159, 157, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =60
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  PaddingBottom: =0
+                  PaddingLeft: =12
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  Size: =12
+                  Text: ="No assets or setups found for """ & Trim(txtMoveSearch.Text) & """"
+                  Visible: |-
+                    =CountRows(galAssetResults.AllItems) = 0
+                        && CountRows(galSetupResults.AllItems) = 0
+                  Width: =Parent.Width - 16
+                  X: =103

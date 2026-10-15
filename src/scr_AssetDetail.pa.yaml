@@ -1,0 +1,984 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  scr_AssetDetail:
+    Properties:
+      Fill: =RGBA(255, 255, 255, 1)
+      LoadingSpinnerColor: =RGBA(0, 120, 212, 1)
+      OnVisible: |-
+        =// Haal het record opnieuw op zodat bewerkingen elders meteen zichtbaar zijn.
+        If(
+            !IsBlank(varCurrentAsset.'Id (ID)'),
+            Set(varCurrentAsset, LookUp(Equipment_Assets, 'Id (ID)' = varCurrentAsset.'Id (ID)'))
+        );
+        Set(
+            varAssetFields,
+            Table(
+                { FieldName: "Device name",            FieldValue: Coalesce(varCurrentAsset.DeviceName, "-") },
+        { FieldName: "Manufacturer",           FieldValue: Coalesce(varCurrentAsset.Manufacturer, "-") },
+                { FieldName: "Serial number",            FieldValue: Coalesce(varCurrentAsset.SerialNumber, "-") },
+                { FieldName: "UA number",              FieldValue: Coalesce(varCurrentAsset.UANumber, "-") },
+                { FieldName: "Setup(s)",               FieldValue: If(
+                    IsEmpty(varCurrentAsset.Setups),
+                    "-",
+                    Concat(varCurrentAsset.Setups, Value, ", ")
+                ) },
+                { FieldName: "Campus",                 FieldValue: Coalesce(varCurrentAsset.CurrentCampus.Value, "-") },
+                { FieldName: "Room",                 FieldValue: Coalesce(varCurrentAsset.'CurrentLocation (CurrentLocation0)'.Value, "-") },
+                { FieldName: "Owner group",         FieldValue: Coalesce(varCurrentAsset.OwnerGroup.Value, "-") },
+                { FieldName: "User group",        FieldValue: Coalesce(varCurrentAsset.UserGroup.Value, "-") },
+                { FieldName: "Status",                 FieldValue: Coalesce(varCurrentAsset.Status.Value, "-") },
+                { FieldName: "Assigned to",          FieldValue: Coalesce(varCurrentAsset.CurrentHolder.DisplayName, "-") },
+                { FieldName: "Last moved by", FieldValue: Coalesce(varCurrentAsset.LastRelocatedBy.DisplayName, "-") },
+                { FieldName: "Last maintenance",      FieldValue: If(IsBlank(varCurrentAsset.LastMaintenanceDate), "-", Text(varCurrentAsset.LastMaintenanceDate, DateTimeFormat.ShortDate)) },
+                { FieldName: "Next maintenance",      FieldValue: If(IsBlank(varCurrentAsset.NextMaintenanceDue), "-", Text(varCurrentAsset.NextMaintenanceDue, DateTimeFormat.ShortDate)) },
+                { FieldName: "Commissioning required", FieldValue: Coalesce(varCurrentAsset.CommissioningRequired.Value, "-") },
+        { FieldName: "Commissioning done",     FieldValue: If(
+            IsEmpty(varCurrentAsset.CommissioningDone),
+            "-",
+            Concat(varCurrentAsset.CommissioningDone, Value, ", ")
+        ) },
+        { FieldName: "Last updated",      FieldValue: If(IsBlank(varCurrentAsset.LastUpdated), "-", Text(varCurrentAsset.LastUpdated, DateTimeFormat.ShortDateTime24)) }
+            )
+        )
+    Children:
+      - conAssetDetail:
+          Control: GroupContainer@1.5.0
+          Variant: AutoLayout
+          Properties:
+            Height: =Parent.Height
+            LayoutAlignItems: =LayoutAlignItems.Center
+            LayoutDirection: =LayoutDirection.Vertical
+            PaddingBottom: =8
+            PaddingLeft: =8
+            PaddingRight: =8
+            PaddingTop: =8
+            Width: =Parent.Width
+          Children:
+            - conAssetHeader:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  FillPortions: =0
+                  Height: =112
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutGap: =12
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  LayoutWrap: =true
+                  PaddingBottom: =8
+                  PaddingLeft: =8
+                  PaddingRight: =8
+                  PaddingTop: =8
+                  Width: =Parent.Width
+                Children:
+                  - icoAssetBack:
+                      Control: Classic/Icon@2.5.0
+                      Properties:
+                        AccessibleLabel: ="Back to overview"
+                        BorderColor: =RGBA(0, 0, 0, 0)
+                        Color: =RGBA(96, 94, 92, 1)
+                        DisabledBorderColor: =RGBA(245, 245, 245, 1)
+                        DisabledColor: =RGBA(225, 223, 221, 1)
+                        DisabledFill: =RGBA(0, 0, 0, 0)
+                        FocusedBorderThickness: =4
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 0, 0, 0)
+                        HoverColor: =RGBA(16, 110, 190, 1)
+                        HoverFill: =RGBA(0, 0, 0, 0)
+                        Icon: =Icon.BackArrow
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        OnSelect: =Back(ScreenTransition.Fade)
+                        PressedBorderColor: =RGBA(0, 0, 0, 0)
+                        PressedColor: =RGBA(16, 110, 190, 1)
+                        PressedFill: =RGBA(0, 0, 0, 0)
+                        Tooltip: ="Back"
+                        Width: =36
+                        X: =010
+                        Y: =(Parent.Height - Self.Height) / 2
+                  - conAssetTitleBlock:
+                      Control: GroupContainer@1.5.0
+                      Variant: AutoLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        Height: =Parent.Height
+                        LayoutAlignItems: =LayoutAlignItems.Center
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =200
+                        PaddingBottom: =8
+                        PaddingLeft: =8
+                        PaddingRight: =8
+                        PaddingTop: =8
+                        Width: =Parent.Width
+                      Children:
+                        - lblAssetTitle:
+                            Control: Label@2.5.1
+                            Properties:
+                              BorderColor: =RGBA(0, 0, 0, 1)
+                              Color: =RGBA(50, 49, 48, 1)
+                              DisabledColor: =RGBA(161, 159, 157, 1)
+                              Font: =Font.'Segoe UI'
+                              FontWeight: =FontWeight.Semibold
+                              Height: =Self.Size * 2.9
+                              LayoutMinHeight: =16
+                              LayoutMinWidth: =16
+                              PaddingBottom: =0
+                              PaddingLeft: =12
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Size: =If(Parent.Width < 400, 16, If(Parent.Width < 600, 18, 20))
+                              Text: =Coalesce(varCurrentAsset.Titel, "No asset selected")
+                              Width: =Parent.Width
+                              X: =103
+                        - lblAssetSubtitle:
+                            Control: Label@2.5.1
+                            Properties:
+                              BorderColor: =RGBA(0, 0, 0, 1)
+                              Color: =RGBA(96, 94, 92, 1)
+                              DisabledColor: =RGBA(161, 159, 157, 1)
+                              Font: =Font.'Segoe UI'
+                              Height: =Self.Size * 2.9
+                              LayoutMinHeight: =16
+                              LayoutMinWidth: =16
+                              PaddingBottom: =0
+                              PaddingLeft: =12
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Size: =12
+                              Text: |-
+                                =Coalesce(varCurrentAsset.DeviceName, "") & "   |   " &
+                                 Coalesce(varCurrentAsset.CurrentCampus.Value, "?") & " / " &
+                                 Coalesce(varCurrentAsset.'CurrentLocation (CurrentLocation0)'.Value, "?")
+                              Width: =Parent.Width
+                              X: =103
+            - conAssetBadges:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  FillPortions: =0
+                  Height: =44
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutGap: =10
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  LayoutWrap: =true
+                  PaddingBottom: =8
+                  PaddingLeft: =12
+                  PaddingRight: =12
+                  PaddingTop: =8
+                  Width: =Parent.Width
+                Children:
+                  - lblAssetCommBadge:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(255, 255, 255, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        Fill: |-
+                          =With(
+                              {
+                                  req: Coalesce(varCurrentAsset.CommissioningRequired.Value, "None"),
+                                  done: Concat(varCurrentAsset.CommissioningDone, Value, " | ")
+                              },
+                              If(
+                                  req = "None",                       RGBA(16, 124, 16, 1),
+                                  // Commissioned at this campus, among possibly several.
+                                  !IsBlank(Find(req, done)),          RGBA(16, 124, 16, 1),
+                                  // An extended commissioning covers the administrative one.
+                                  req = "administrative"
+                                      && !IsBlank(Find("extended", done)),
+                                                                      RGBA(16, 124, 16, 1),
+                                  IsBlank(done),                      RGBA(168, 0, 0, 1),
+                                  // Something was done, but not what this asset needs.
+                                  RGBA(196, 116, 0, 1)
+                              )
+                          )
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =Self.Size * 2.9
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        PaddingBottom: =0
+                        PaddingLeft: =8
+                        PaddingRight: =8
+                        PaddingTop: =0
+                        Size: =If(Parent.Width < 600, 10, 11)
+                        Text: |-
+                          =With(
+                              {
+                                  req: Coalesce(varCurrentAsset.CommissioningRequired.Value, "None"),
+                                  done: Concat(varCurrentAsset.CommissioningDone, Value, " | ")
+                              },
+                              If(
+                                  req = "None",                       "Not required",
+                                  // Commissioned at this campus, among possibly several.
+                                  !IsBlank(Find(req, done)),          "Commissioned",
+                                  // An extended commissioning covers the administrative one.
+                                  req = "administrative"
+                                      && !IsBlank(Find("extended", done)),
+                                                                      "Commissioned",
+                                  IsBlank(done),                      "Not commissioned",
+                                  // Something was done, but not what this asset needs.
+                                  "Incomplete"
+                              )
+                          )
+                        Visible: =!IsBlank(varCurrentAsset.'Id (ID)')
+                        Width: =If(Parent.Width < 600, 118, 150)
+                        X: =103
+                  - lblAssetStatusBadge:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(255, 255, 255, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        Fill: |-
+                          =Switch(
+                              varCurrentAsset.Status.Value,
+                              "Available", RGBA(16, 124, 16, 1),
+                              "In-use",    RGBA(196, 137, 0, 1),
+                              RGBA(96, 94, 92, 1)
+                          )
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =Self.Size * 2.9
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        PaddingBottom: =0
+                        PaddingLeft: =12
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =If(Parent.Width < 600, 10, 11)
+                        Text: =Coalesce(varCurrentAsset.Status.Value, "Unknown")
+                        Visible: =!IsBlank(varCurrentAsset.'Id (ID)')
+                        Width: =If(Parent.Width < 600, 84, 110)
+                        X: =103
+            - conAssetBody:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  Height: =Parent.Height
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutGap: =8
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  LayoutOverflowY: =LayoutOverflow.Scroll
+                  PaddingBottom: =8
+                  PaddingLeft: =8
+                  PaddingRight: =8
+                  PaddingTop: =8
+                  Width: =Parent.Width
+                Children:
+                  - lblFieldsHeader:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(96, 94, 92, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        Fill: =RGBA(245, 245, 245, 1)
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =26
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        PaddingBottom: =0
+                        PaddingLeft: =12
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =11
+                        Text: ="DETAILS"
+                        Width: =Parent.Width - 16
+                        X: =103
+                  - galAssetFields:
+                      Control: Gallery@2.15.0
+                      Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        BorderColor: =RGBA(245, 245, 245, 1)
+                        FillPortions: =0
+                        Height: =CountRows(varAssetFields) * 34
+                        Items: =varAssetFields
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        ShowScrollbar: =false
+                        TemplateSize: =34
+                        Width: =Parent.Width - 16
+                      Children:
+                        - lblFieldName:
+                            Control: Label@2.5.1
+                            Properties:
+                              BorderColor: =RGBA(0, 0, 0, 1)
+                              Color: =RGBA(96, 94, 92, 1)
+                              DisabledColor: =RGBA(161, 159, 157, 1)
+                              Font: =Font.'Segoe UI'
+                              FontWeight: =If(ThisItem.IsSelected, FontWeight.Semibold, FontWeight.Normal)
+                              Height: =30
+                              OnSelect: =Select(Parent)
+                              PaddingBottom: =0
+                              PaddingLeft: =8
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Size: =12
+                              Text: =ThisItem.FieldName
+                              Width: =Min(Parent.TemplateWidth * 0.45, 210)
+                              Wrap: =false
+                        - lblFieldValue:
+                            Control: Label@2.5.1
+                            Properties:
+                              BorderColor: =RGBA(0, 0, 0, 1)
+                              Color: =RGBA(50, 49, 48, 1)
+                              DisabledColor: =RGBA(161, 159, 157, 1)
+                              Font: =Font.'Segoe UI'
+                              FontWeight: =FontWeight.Semibold
+                              Height: =30
+                              OnSelect: =Select(Parent)
+                              PaddingBottom: =0
+                              PaddingLeft: =8
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Size: =12
+                              Text: =ThisItem.FieldValue
+                              Width: =Parent.TemplateWidth - lblFieldName.Width - 8
+                              Wrap: =false
+                              X: =lblFieldName.Width
+                        - recFieldSep:
+                            Control: Rectangle@2.3.0
+                            Properties:
+                              BorderColor: =RGBA(0, 0, 0, 0)
+                              Fill: =RGBA(240, 240, 240, 1)
+                              Height: =1
+                              OnSelect: =Select(Parent)
+                              Visible: =ThisItem.IsSelected
+                              Width: =Parent.TemplateWidth
+                              Y: =Parent.TemplateHeight - 1
+                  - lblDocsHeader:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(96, 94, 92, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        Fill: =RGBA(245, 245, 245, 1)
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =26
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        PaddingBottom: =0
+                        PaddingLeft: =12
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =11
+                        Text: ="DOCUMENTS"
+                        Width: =Parent.Width - 16
+                        X: =103
+                  - btnOpenAssetDocs:
+                      Control: Classic/Button@2.2.0
+                      Properties:
+                        BorderColor: =RGBA(219, 219, 219, 1)
+                        BorderStyle: =BorderStyle.None
+                        BorderThickness: =1
+                        Color: =RGBA(0, 120, 212, 1)
+                        DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        DisabledFill: =RGBA(242, 242, 241, 0)
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Font: =Font.'Segoe UI'
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 0, 0, 0)
+                        HoverColor: =RGBA(255, 255, 255, 1)
+                        HoverFill: =RGBA(235, 243, 252, 1)
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        OnSelect: |-
+                          =Launch(
+                              "https://uantwerpen.sharepoint.com/sites/LabEquipmentHub/Assets_Documents/Forms/AllItems.aspx?id=" &
+                                  EncodeUrl("/sites/LabEquipmentHub/Assets_Documents/" & varCurrentAsset.Titel),
+                              {},
+                              LaunchTarget.New
+                          )
+                        PressedBorderColor: =RGBA(0, 69, 120, 1)
+                        PressedColor: =RGBA(255, 255, 255, 1)
+                        PressedFill: =RGBA(16, 110, 190, 1)
+                        RadiusBottomLeft: =4
+                        RadiusBottomRight: =4
+                        RadiusTopLeft: =4
+                        RadiusTopRight: =4
+                        Size: =12
+                        Text: ="Open this device's folder"
+                        Width: =If(Parent.Width < 600, Parent.Width - 16, 300)
+                  - galAssetDocs:
+                      Control: Gallery@2.15.0
+                      Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        BorderColor: =RGBA(245, 245, 245, 1)
+                        FillPortions: =0
+                        Height: =120
+                        Items: |-
+                          =Filter(
+                              Assets_Documents,
+                              Not('{IsFolder}'),
+                              EndsWith('{Path}', "/" & varCurrentAsset.Titel & "/")
+                                  || AssetID = varCurrentAsset.Titel
+                          )
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        TemplateSize: =40
+                        Width: =Parent.Width - 16
+                      Children:
+                        - lblDocName:
+                            Control: Label@2.5.1
+                            Properties:
+                              BorderColor: =RGBA(0, 0, 0, 1)
+                              Color: =RGBA(0, 120, 212, 1)
+                              DisabledColor: =RGBA(161, 159, 157, 1)
+                              Font: =Font.'Segoe UI'
+                              FontWeight: =If(ThisItem.IsSelected, FontWeight.Semibold, FontWeight.Normal)
+                              Height: =34
+                              OnSelect: =Launch(ThisItem.'{Link}')
+                              PaddingBottom: =0
+                              PaddingLeft: =8
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Size: =12
+                              Text: =ThisItem.'{FilenameWithExtension}'
+                              Underline: =true
+                              Width: =Parent.TemplateWidth - 130
+                              Wrap: =false
+                              X: =4
+                        - lblDocType:
+                            Control: Label@2.5.1
+                            Properties:
+                              Align: =Align.Right
+                              BorderColor: =RGBA(0, 0, 0, 1)
+                              Color: =RGBA(161, 159, 157, 1)
+                              DisabledColor: =RGBA(161, 159, 157, 1)
+                              Font: =Font.'Segoe UI'
+                              FontWeight: =If(ThisItem.IsSelected, FontWeight.Semibold, FontWeight.Normal)
+                              Height: =34
+                              OnSelect: =Launch(ThisItem.'{Link}')
+                              PaddingBottom: =0
+                              PaddingLeft: =12
+                              PaddingRight: =8
+                              PaddingTop: =0
+                              Size: =11
+                              Text: =Coalesce(ThisItem.DocumentType.Value, "")
+                              Width: =120
+                              Wrap: =false
+                              X: =Parent.TemplateWidth - Self.Width - 4
+                  - lblNoDocs:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(161, 159, 157, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        Font: =Font.'Segoe UI'
+                        Height: =28
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        PaddingBottom: =0
+                        PaddingLeft: =12
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =11
+                        Text: ="No documents yet. Open the folder to add one."
+                        Visible: =CountRows(galAssetDocs.AllItems) = 0
+                        Width: =Parent.Width - 16
+                        X: =103
+                  - lblHistoryHeader:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(96, 94, 92, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        Fill: =RGBA(245, 245, 245, 1)
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =26
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        PaddingBottom: =0
+                        PaddingLeft: =12
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =11
+                        Text: ="MOVE HISTORY"
+                        Width: =Parent.Width - 16
+                        X: =103
+                  - galAssetHistory:
+                      Control: Gallery@2.15.0
+                      Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        BorderColor: =RGBA(245, 245, 245, 1)
+                        FillPortions: =0
+                        Height: =180
+                        Items: |-
+                          =Sort(
+                              Filter(Equipment_MovementLog, Title = varCurrentAsset.Titel),
+                              TimeStamp,
+                              SortOrder.Descending
+                          )
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        TemplateSize: =44
+                        Width: =Parent.Width - 16
+                      Children:
+                        - lblMoveLine:
+                            Control: Label@2.5.1
+                            Properties:
+                              BorderColor: =RGBA(0, 0, 0, 1)
+                              Color: =RGBA(50, 49, 48, 1)
+                              DisabledColor: =RGBA(161, 159, 157, 1)
+                              Font: =Font.'Segoe UI'
+                              FontWeight: =If(ThisItem.IsSelected, FontWeight.Semibold, FontWeight.Normal)
+                              Height: =22
+                              OnSelect: =Select(Parent)
+                              PaddingBottom: =0
+                              PaddingLeft: =8
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Size: =12
+                              Text: |-
+                                =Coalesce(ThisItem.FromLocation.Value, "?") & "  ->  " &
+                                 Coalesce(ThisItem.ToLocation.Value, "?")
+                              Width: =Parent.TemplateWidth - 16
+                              Wrap: =false
+                              X: =4
+                              Y: =2
+                        - lblMoveMeta:
+                            Control: Label@2.5.1
+                            Properties:
+                              BorderColor: =RGBA(0, 0, 0, 1)
+                              Color: =RGBA(161, 159, 157, 1)
+                              DisabledColor: =RGBA(161, 159, 157, 1)
+                              Font: =Font.'Segoe UI'
+                              FontWeight: =If(ThisItem.IsSelected, FontWeight.Semibold, FontWeight.Normal)
+                              Height: =18
+                              OnSelect: =Select(Parent)
+                              PaddingBottom: =0
+                              PaddingLeft: =8
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Size: =10
+                              Text: |-
+                                =If(IsBlank(ThisItem.TimeStamp), "", Text(ThisItem.TimeStamp, DateTimeFormat.ShortDateTime24)) &
+                                 "   |   " & Coalesce(ThisItem.MovedBy.DisplayName, "?") &
+                                 "   |   " & Coalesce(ThisItem.ActionType.Value, "")
+                              Width: =Parent.TemplateWidth - 16
+                              Wrap: =false
+                              X: =4
+                              Y: =23
+                        - recHistSep:
+                            Control: Rectangle@2.3.0
+                            Properties:
+                              BorderColor: =RGBA(0, 0, 0, 0)
+                              Fill: =RGBA(240, 240, 240, 1)
+                              Height: =1
+                              OnSelect: =Select(Parent)
+                              Visible: =ThisItem.IsSelected
+                              Width: =Parent.TemplateWidth
+                              Y: =Parent.TemplateHeight - 1
+                  - lblNoHistory:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(161, 159, 157, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        Font: =Font.'Segoe UI'
+                        Height: =28
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        PaddingBottom: =0
+                        PaddingLeft: =12
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =11
+                        Text: ="This asset has not been moved through the app yet."
+                        Visible: =CountRows(galAssetHistory.AllItems) = 0
+                        Width: =Parent.Width - 16
+                        X: =103
+                  - lblAssetTicketsHeader:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(96, 94, 92, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        Fill: =RGBA(245, 245, 245, 1)
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =26
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        PaddingBottom: =0
+                        PaddingLeft: =12
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =11
+                        Text: ="ISSUES"
+                        Width: =Parent.Width - 16
+                        X: =103
+                  - galAssetTickets:
+                      Control: Gallery@2.15.0
+                      Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        BorderColor: =RGBA(245, 245, 245, 1)
+                        FillPortions: =0
+                        Height: =170
+                        Items: |-
+                          =Sort(
+                              Filter(Equipment_Tickets, Title = varCurrentAsset.Titel),
+                              ReportedDate,
+                              SortOrder.Descending
+                          )
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        TemplateSize: =56
+                        Width: =Parent.Width - 16
+                      Children:
+                        - lblAssetTicketLine:
+                            Control: Label@2.5.1
+                            Properties:
+                              BorderColor: =RGBA(0, 0, 0, 1)
+                              Color: =RGBA(50, 49, 48, 1)
+                              DisabledColor: =RGBA(161, 159, 157, 1)
+                              Font: =Font.'Segoe UI'
+                              FontWeight: =If(ThisItem.IsSelected, FontWeight.Semibold, FontWeight.Normal)
+                              Height: =22
+                              OnSelect: |-
+                                =Set(varCurrentTicket, ThisItem);
+                                Navigate(scr_TicketDetail, ScreenTransition.Fade)
+                              PaddingBottom: =0
+                              PaddingLeft: =8
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Size: =12
+                              Text: |-
+                                =Coalesce(ThisItem.TypeMaintenance.Value, "Problem") &
+                                 If(IsBlank(ThisItem.Severity.Value), "", "   (" & ThisItem.Severity.Value & ")") &
+                                 "   -   " & Left(Coalesce(ThisItem.Description, ""), 70)
+                              Width: =Parent.TemplateWidth - 120
+                              Wrap: =false
+                              X: =4
+                              Y: =4
+                        - lblAssetTicketMeta:
+                            Control: Label@2.5.1
+                            Properties:
+                              BorderColor: =RGBA(0, 0, 0, 1)
+                              Color: =RGBA(161, 159, 157, 1)
+                              DisabledColor: =RGBA(161, 159, 157, 1)
+                              Font: =Font.'Segoe UI'
+                              FontWeight: =If(ThisItem.IsSelected, FontWeight.Semibold, FontWeight.Normal)
+                              Height: =20
+                              OnSelect: |-
+                                =Set(varCurrentTicket, ThisItem);
+                                Navigate(scr_TicketDetail, ScreenTransition.Fade)
+                              PaddingBottom: =0
+                              PaddingLeft: =8
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Size: =10
+                              Text: |-
+                                ="reported by " & Coalesce(ThisItem.ReportedBy.DisplayName, "?") &
+                                 If(IsBlank(ThisItem.ReportedDate), "", " on " & Text(ThisItem.ReportedDate, DateTimeFormat.ShortDate)) &
+                                 If(
+                                     IsBlank(ThisItem.ResolvedDate),
+                                     "",
+                                     "   |   resolved by " & Coalesce(ThisItem.ResolvedBy.DisplayName, "?") &
+                                     ": " & Left(Coalesce(ThisItem.ResolutionNotes, "no notes"), 60)
+                                 )
+                              Width: =Parent.TemplateWidth - 120
+                              Wrap: =false
+                              X: =4
+                              Y: =28
+                        - lblAssetTicketBadge:
+                            Control: Label@2.5.1
+                            Properties:
+                              Align: =Align.Center
+                              BorderColor: =RGBA(0, 0, 0, 1)
+                              Color: =RGBA(255, 255, 255, 1)
+                              DisabledColor: =RGBA(161, 159, 157, 1)
+                              Fill: |-
+                                =If(
+                                    IsBlank(ThisItem.ResolvedDate),
+                                    RGBA(196, 89, 17, 1),
+                                    RGBA(16, 124, 16, 1)
+                                )
+                              Font: =Font.'Segoe UI'
+                              FontWeight: =If(ThisItem.IsSelected, FontWeight.Semibold, FontWeight.Normal)
+                              Height: =22
+                              OnSelect: |-
+                                =Set(varCurrentTicket, ThisItem);
+                                Navigate(scr_TicketDetail, ScreenTransition.Fade)
+                              PaddingBottom: =0
+                              PaddingLeft: =12
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Size: =10
+                              Text: =If(IsBlank(ThisItem.ResolvedDate), "Open", "Resolved")
+                              Width: =90
+                              Wrap: =false
+                              X: =Parent.TemplateWidth - Self.Width - 14
+                              Y: =(Parent.TemplateHeight / 2) - (Self.Height / 2)
+                        - recAssetTicketSep:
+                            Control: Rectangle@2.3.0
+                            Properties:
+                              BorderColor: =RGBA(0, 0, 0, 0)
+                              Fill: =RGBA(240, 240, 240, 1)
+                              Height: =1
+                              OnSelect: |-
+                                =Set(varCurrentTicket, ThisItem);
+                                Navigate(scr_TicketDetail, ScreenTransition.Fade)
+                              Visible: =ThisItem.IsSelected
+                              Width: =Parent.TemplateWidth
+                              Y: =Parent.TemplateHeight - 1
+                  - lblNoTickets:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(161, 159, 157, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        Font: =Font.'Segoe UI'
+                        Height: =28
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        PaddingBottom: =0
+                        PaddingLeft: =12
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =11
+                        Text: ="No issues reported for this asset yet."
+                        Visible: =CountRows(galAssetTickets.AllItems) = 0
+                        Width: =Parent.Width - 16
+                        X: =103
+            - conAssetActions:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  Fill: =RGBA(250, 250, 250, 1)
+                  FillPortions: =0
+                  Height: =If(Parent.Width < 980, 188, 76)
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutGap: =12
+                  LayoutJustifyContent: =LayoutJustifyContent.Center
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  LayoutWrap: =true
+                  PaddingBottom: =8
+                  PaddingLeft: =8
+                  PaddingRight: =8
+                  PaddingTop: =8
+                  Width: =Parent.Width
+                Children:
+                  - btnAssetEdit:
+                      Control: Classic/Button@2.2.0
+                      Properties:
+                        BorderColor: =RGBA(219, 219, 219, 1)
+                        BorderStyle: =BorderStyle.None
+                        BorderThickness: =1
+                        Color: =RGBA(50, 49, 48, 1)
+                        DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        DisabledFill: =RGBA(242, 242, 241, 0)
+                        DisplayMode: =If(IsBlank(varCurrentAsset.'Id (ID)'), DisplayMode.Disabled, DisplayMode.Edit)
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Font: =Font.'Segoe UI'
+                        HoverBorderColor: =RGBA(0, 0, 0, 0)
+                        HoverColor: =RGBA(255, 255, 255, 1)
+                        HoverFill: =RGBA(243, 242, 241, 1)
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        OnSelect: |-
+                          =Set(varEditAsset, varCurrentAsset);
+                          Navigate(scr_AssetEdit, ScreenTransition.Fade)
+                        PressedBorderColor: =RGBA(0, 69, 120, 1)
+                        PressedColor: =RGBA(255, 255, 255, 1)
+                        PressedFill: =RGBA(16, 110, 190, 1)
+                        RadiusBottomLeft: =4
+                        RadiusBottomRight: =4
+                        RadiusTopLeft: =4
+                        RadiusTopRight: =4
+                        Size: =13
+                        Text: ="Edit"
+                        Width: =If(Parent.Width < 760, (Parent.Width - 36) / 2, 120)
+                  - btnAssetHistory:
+                      Control: Classic/Button@2.2.0
+                      Properties:
+                        BorderColor: =RGBA(219, 219, 219, 1)
+                        BorderStyle: =BorderStyle.None
+                        BorderThickness: =1
+                        Color: =RGBA(50, 49, 48, 1)
+                        DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        DisabledFill: =RGBA(242, 242, 241, 0)
+                        DisplayMode: =If(IsBlank(varCurrentAsset.'Id (ID)'), DisplayMode.Disabled, DisplayMode.Edit)
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Font: =Font.'Segoe UI'
+                        HoverBorderColor: =RGBA(0, 0, 0, 0)
+                        HoverColor: =RGBA(255, 255, 255, 1)
+                        HoverFill: =RGBA(243, 242, 241, 1)
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        OnSelect: |-
+                          =Set(varHistFilter, "All");
+                          Navigate(scr_AssetHistory, ScreenTransition.Fade)
+                        PressedBorderColor: =RGBA(0, 69, 120, 1)
+                        PressedColor: =RGBA(255, 255, 255, 1)
+                        PressedFill: =RGBA(16, 110, 190, 1)
+                        RadiusBottomLeft: =4
+                        RadiusBottomRight: =4
+                        RadiusTopLeft: =4
+                        RadiusTopRight: =4
+                        Size: =13
+                        Text: ="Full history"
+                        Width: =If(Parent.Width < 760, (Parent.Width - 36) / 2, 180)
+                  - btnAssetMove:
+                      Control: Classic/Button@2.2.0
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 0)
+                        BorderStyle: =BorderStyle.None
+                        Color: =RGBA(255, 255, 255, 1)
+                        DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        DisabledFill: =RGBA(237, 235, 233, 1)
+                        DisplayMode: =If(IsBlank(varCurrentAsset.'Id (ID)'), DisplayMode.Disabled, DisplayMode.Edit)
+                        Fill: =RGBA(0, 120, 212, 1)
+                        Font: =Font.'Segoe UI'
+                        HoverBorderColor: =RGBA(0, 0, 0, 0)
+                        HoverColor: =RGBA(255, 255, 255, 1)
+                        HoverFill: =RGBA(16, 110, 190, 1)
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        OnSelect: |-
+                          =If(
+                              varCurrentAsset.'Id (ID)' in colMoveBuffer.'Id (ID)',
+                              Notify("This asset is already in the move list.", NotificationType.Warning),
+                              Collect(colMoveBuffer, varCurrentAsset)
+                          );
+                          Navigate(scr_Move, ScreenTransition.Fade)
+                        PressedBorderColor: =RGBA(0, 69, 120, 1)
+                        PressedColor: =RGBA(255, 255, 255, 1)
+                        PressedFill: =RGBA(16, 110, 190, 1)
+                        RadiusBottomLeft: =4
+                        RadiusBottomRight: =4
+                        RadiusTopLeft: =4
+                        RadiusTopRight: =4
+                        Size: =13
+                        Text: ="Move"
+                        Width: =If(Parent.Width < 760, (Parent.Width - 36) / 2, 170)
+                  - btnAssetTicket:
+                      Control: Classic/Button@2.2.0
+                      Properties:
+                        BorderColor: =RGBA(219, 219, 219, 1)
+                        BorderStyle: =BorderStyle.None
+                        BorderThickness: =1
+                        Color: =RGBA(50, 49, 48, 1)
+                        DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        DisabledFill: =RGBA(242, 242, 241, 0)
+                        DisplayMode: =If(IsBlank(varCurrentAsset.'Id (ID)'), DisplayMode.Disabled, DisplayMode.Edit)
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Font: =Font.'Segoe UI'
+                        HoverBorderColor: =RGBA(0, 0, 0, 0)
+                        HoverColor: =RGBA(255, 255, 255, 1)
+                        HoverFill: =RGBA(243, 242, 241, 1)
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        OnSelect: |-
+                          =Set(varCurrentTicket, Blank());
+                          Navigate(scr_TicketDetail, ScreenTransition.Fade)
+                        PressedBorderColor: =RGBA(0, 69, 120, 1)
+                        PressedColor: =RGBA(255, 255, 255, 1)
+                        PressedFill: =RGBA(16, 110, 190, 1)
+                        RadiusBottomLeft: =4
+                        RadiusBottomRight: =4
+                        RadiusTopLeft: =4
+                        RadiusTopRight: =4
+                        Size: =13
+                        Text: ="Report a problem"
+                        Width: =If(Parent.Width < 760, (Parent.Width - 36) / 2, 170)
+                  - btnAssetBook:
+                      Control: Classic/Button@2.2.0
+                      Properties:
+                        BorderColor: =RGBA(219, 219, 219, 1)
+                        BorderStyle: =BorderStyle.None
+                        BorderThickness: =1
+                        Color: =RGBA(50, 49, 48, 1)
+                        DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        DisabledFill: =RGBA(242, 242, 241, 0)
+                        DisplayMode: =If(IsBlank(varCurrentAsset.'Id (ID)'), DisplayMode.Disabled, DisplayMode.Edit)
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Font: =Font.'Segoe UI'
+                        HoverBorderColor: =RGBA(0, 0, 0, 0)
+                        HoverColor: =RGBA(255, 255, 255, 1)
+                        HoverFill: =RGBA(243, 242, 241, 1)
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        OnSelect: |-
+                          =Set(varCurrentBooking, Blank());
+                          // Also clear the setup, otherwise a setup opened earlier would
+                          // still be pre-selected on the booking form.
+                          Set(varCurrentSetup, Blank());
+                          Navigate(scr_BookingDetail, ScreenTransition.Fade)
+                        PressedBorderColor: =RGBA(0, 69, 120, 1)
+                        PressedColor: =RGBA(255, 255, 255, 1)
+                        PressedFill: =RGBA(16, 110, 190, 1)
+                        RadiusBottomLeft: =4
+                        RadiusBottomRight: =4
+                        RadiusTopLeft: =4
+                        RadiusTopRight: =4
+                        Size: =13
+                        Text: ="Book"
+                        Width: =If(Parent.Width < 760, (Parent.Width - 36) / 2, 170)
+                  - btnAssetBookings:
+                      Control: Classic/Button@2.2.0
+                      Properties:
+                        BorderColor: =RGBA(219, 219, 219, 1)
+                        BorderStyle: =BorderStyle.None
+                        BorderThickness: =1
+                        Color: =RGBA(50, 49, 48, 1)
+                        DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        DisabledFill: =RGBA(242, 242, 241, 0)
+                        DisplayMode: =If(IsBlank(varCurrentAsset.'Id (ID)'), DisplayMode.Disabled, DisplayMode.Edit)
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Font: =Font.'Segoe UI'
+                        HoverBorderColor: =RGBA(0, 0, 0, 0)
+                        HoverColor: =RGBA(255, 255, 255, 1)
+                        HoverFill: =RGBA(243, 242, 241, 1)
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        OnSelect: |-
+                          =Set(varBookingDevice, varCurrentAsset.Titel);
+                          Set(varBookingView, "calendar");
+                          Set(varCalMonth, Date(Year(Today()), Month(Today()), 1));
+                          Navigate(scr_Bookings, ScreenTransition.Fade)
+                        PressedBorderColor: =RGBA(0, 69, 120, 1)
+                        PressedColor: =RGBA(255, 255, 255, 1)
+                        PressedFill: =RGBA(16, 110, 190, 1)
+                        RadiusBottomLeft: =4
+                        RadiusBottomRight: =4
+                        RadiusTopLeft: =4
+                        RadiusTopRight: =4
+                        Size: =13
+                        Text: ="Bookings"
+                        Width: =If(Parent.Width < 760, (Parent.Width - 36) / 2, 170)

@@ -1,0 +1,31 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+App:
+  Properties:
+    OnStart: |-
+      =Clear(colMoveBuffer);
+      // Give colGroupFilter a schema before anything reads colGroupFilter.Value.
+      // Collecting one row and clearing it is the plainest way to declare the
+      // shape without leaving a row behind.
+      Collect(colGroupFilter, { Value: "" });
+      Clear(colGroupFilter);
+      Collect(colCommDone, { Value: "" });
+      Clear(colCommDone);
+      // The setups an asset belongs to, while it is being edited. A multi-value
+      // Lookup is a table of { Id, Value }, so the seed carries both.
+      Collect(colAssetSetups, { Id: 0, Value: "" });
+      Clear(colAssetSetups);
+      // The assets picked to be added to a setup, before the add is committed.
+      Collect(colSetupAddPick, { Id: 0, Value: "" });
+      Clear(colSetupAddPick);
+      // The assets a booking covers. One booking form, one row per device.
+      Collect(colBkAssets, { Id: 0, Value: "" });
+      Clear(colBkAssets);
+      Set(varHomeTab, "assets"); Set(varBuildId, "2026-09-24 10:42")
+    Theme: =PowerAppsTheme

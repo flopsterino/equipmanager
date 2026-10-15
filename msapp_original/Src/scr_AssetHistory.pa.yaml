@@ -1,0 +1,556 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  scr_AssetHistory:
+    Properties:
+      Fill: =RGBA(255, 255, 255, 1)
+      LoadingSpinnerColor: =RGBA(0, 120, 212, 1)
+      OnVisible: |-
+        =If(IsBlank(varHistFilter), Set(varHistFilter, "All"));
+        Clear(colAssetTimeline);
+
+        // 1. Registration of the asset. ForAll over a Filter yields zero or one row by
+        //    itself, with no If that has to mix a record with a blank.
+        Collect(
+            colAssetTimeline,
+            ForAll(
+                Filter(Equipment_Assets, 'Id (ID)' = varCurrentAsset.'Id (ID)') As a,
+                {
+                    SortKey: DateDiff(Date(2000, 1, 1), a.Gemaakt, TimeUnit.Minutes),
+                    EventTime: Text(a.Gemaakt, DateTimeFormat.ShortDateTime24),
+                    Kind: "Registered",
+                    Who: Coalesce(a.'Gemaakt door'.DisplayName, "?"),
+                    Summary: "Asset registered",
+                    Detail: Coalesce(a.DeviceName, "")
+                }
+            )
+        );
+
+        // 2. Moves
+        Collect(
+            colAssetTimeline,
+            ForAll(
+                Filter(Equipment_MovementLog, Title = varCurrentAsset.Titel) As m,
+                {
+                    SortKey: DateDiff(Date(2000, 1, 1), m.TimeStamp, TimeUnit.Minutes),
+                    EventTime: Text(m.TimeStamp, DateTimeFormat.ShortDateTime24),
+                    Kind: If(
+                        m.ActionType.Value = "Handover/Assignment",
+                        "Handover",
+                        "Move"
+                    ),
+                    Who: Coalesce(m.MovedBy.DisplayName, "?"),
+                    Summary: If(
+                        m.ActionType.Value = "Handover/Assignment",
+                        "Assigned to " & Coalesce(m.AssignedUser.DisplayName, "?"),
+                        Coalesce(m.FromLocation.Value, "unknown") & "   to   " & Coalesce(m.ToLocation.Value, "unknown")
+                    ),
+                    Detail: Coalesce(m.ActionType.Value, "")
+                }
+            )
+        );
+
+        // 3. Reported issues
+        Collect(
+            colAssetTimeline,
+            ForAll(
+                Filter(Equipment_Tickets, Title = varCurrentAsset.Titel) As t,
+                {
+                    SortKey: DateDiff(Date(2000, 1, 1), t.ReportedDate, TimeUnit.Minutes),
+                    EventTime: Text(t.ReportedDate, DateTimeFormat.ShortDateTime24),
+                    Kind: "Issue",
+                    Who: Coalesce(t.ReportedBy.DisplayName, "?"),
+                    Summary: Coalesce(t.TypeMaintenance.Value, "Problem reported") &
+                        If(IsBlank(t.Severity.Value), "", "   (" & t.Severity.Value & ")"),
+                    Detail: Coalesce(t.Description, "")
+                }
+            )
+        );
+
+        // 4. Resolutions, as a separate moment on the timeline
+        Collect(
+            colAssetTimeline,
+            ForAll(
+                Filter(
+                    Equipment_Tickets,
+                    Title = varCurrentAsset.Titel,
+                    !IsBlank(ResolvedDate)
+                ) As r,
+                {
+                    SortKey: DateDiff(Date(2000, 1, 1), r.ResolvedDate, TimeUnit.Minutes),
+                    EventTime: Text(r.ResolvedDate, DateTimeFormat.ShortDate),
+                    Kind: "Resolved",
+                    Who: Coalesce(r.ResolvedBy.DisplayName, "?"),
+                    Summary: "Resolved: " & Coalesce(r.TypeMaintenance.Value, "problem"),
+                    Detail: Coalesce(r.ResolutionNotes, "No resolution notes recorded")
+                }
+            )
+        );
+
+        // 5. Bookings
+        Collect(
+            colAssetTimeline,
+            ForAll(
+                Filter(Equipment_Bookings, Title = varCurrentAsset.Titel) As b,
+                {
+                    SortKey: DateDiff(Date(2000, 1, 1), b.StartDate, TimeUnit.Minutes),
+                    EventTime: Text(b.StartDate, DateTimeFormat.ShortDate),
+                    Kind: "Booking",
+                    Who: Coalesce(b.ReservedBy.DisplayName, "?"),
+                    Summary: "Booked until " & Text(b.EndDate, DateTimeFormat.ShortDate),
+                    Detail: Coalesce(b.ProjectCode, "") &
+                        If(IsBlank(b.BookingStatus.Value), "", "   |   " & b.BookingStatus.Value)
+                }
+            )
+        );
+
+        // 6. Maintenance
+        Collect(
+            colAssetTimeline,
+            ForAll(
+                Filter(
+                    Equipment_Assets,
+                    'Id (ID)' = varCurrentAsset.'Id (ID)',
+                    !IsBlank(LastMaintenanceDate)
+                ) As mt,
+                {
+                    SortKey: DateDiff(Date(2000, 1, 1), mt.LastMaintenanceDate, TimeUnit.Minutes),
+                    EventTime: Text(mt.LastMaintenanceDate, DateTimeFormat.ShortDate),
+                    Kind: "Maintenance",
+                    Who: "-",
+                    Summary: "Maintenance carried out",
+                    Detail: If(
+                        IsBlank(mt.NextMaintenanceDue),
+                        "",
+                        "Next maintenance " & Text(mt.NextMaintenanceDue, DateTimeFormat.ShortDate)
+                    )
+                }
+            )
+        )
+    Children:
+      - conHistory:
+          Control: GroupContainer@1.5.0
+          Variant: AutoLayout
+          Properties:
+            Height: =Parent.Height
+            LayoutAlignItems: =LayoutAlignItems.Center
+            LayoutDirection: =LayoutDirection.Vertical
+            PaddingBottom: =8
+            PaddingLeft: =8
+            PaddingRight: =8
+            PaddingTop: =8
+            Width: =Parent.Width
+          Children:
+            - conHistHeader:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  FillPortions: =0
+                  Height: =If(Parent.Width < 600, 104, 100)
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutGap: =12
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  PaddingBottom: =8
+                  PaddingLeft: =8
+                  PaddingRight: =8
+                  PaddingTop: =8
+                  Width: =Parent.Width
+                Children:
+                  - icoHistBack:
+                      Control: Classic/Icon@2.5.0
+                      Properties:
+                        AccessibleLabel: ="Back to the asset"
+                        BorderColor: =RGBA(0, 0, 0, 0)
+                        Color: =RGBA(96, 94, 92, 1)
+                        DisabledBorderColor: =RGBA(245, 245, 245, 1)
+                        DisabledColor: =RGBA(225, 223, 221, 1)
+                        DisabledFill: =RGBA(0, 0, 0, 0)
+                        FocusedBorderThickness: =4
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 0, 0, 0)
+                        HoverColor: =RGBA(16, 110, 190, 1)
+                        HoverFill: =RGBA(0, 0, 0, 0)
+                        Icon: =Icon.BackArrow
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        OnSelect: =Back(ScreenTransition.Fade)
+                        PressedBorderColor: =RGBA(0, 0, 0, 0)
+                        PressedColor: =RGBA(16, 110, 190, 1)
+                        PressedFill: =RGBA(0, 0, 0, 0)
+                        Tooltip: ="Back"
+                        Width: =36
+                        X: =010
+                        Y: =(Parent.Height - Self.Height) / 2
+                  - conHistTitleBlock:
+                      Control: GroupContainer@1.5.0
+                      Variant: AutoLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        Height: =Parent.Height
+                        LayoutAlignItems: =LayoutAlignItems.Center
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        PaddingBottom: =8
+                        PaddingLeft: =8
+                        PaddingRight: =8
+                        PaddingTop: =8
+                        Width: =Parent.Width
+                      Children:
+                        - lblHistTitle:
+                            Control: Label@2.5.1
+                            Properties:
+                              BorderColor: =RGBA(0, 0, 0, 1)
+                              Color: =RGBA(50, 49, 48, 1)
+                              DisabledColor: =RGBA(161, 159, 157, 1)
+                              Font: =Font.'Segoe UI'
+                              FontWeight: =FontWeight.Semibold
+                              Height: =Self.Size * 2.9
+                              LayoutMinHeight: =16
+                              LayoutMinWidth: =16
+                              PaddingBottom: =0
+                              PaddingLeft: =12
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Size: =If(Parent.Width < 400, 15, If(Parent.Width < 600, 16, 18))
+                              Text: ="History of " & Coalesce(varCurrentAsset.Titel, "?")
+                              Width: =Parent.Width
+                              X: =103
+                        - lblHistSubtitle:
+                            Control: Label@2.5.1
+                            Properties:
+                              BorderColor: =RGBA(0, 0, 0, 1)
+                              Color: =RGBA(96, 94, 92, 1)
+                              DisabledColor: =RGBA(161, 159, 157, 1)
+                              Font: =Font.'Segoe UI'
+                              Height: =Self.Size * 2.9
+                              LayoutMinHeight: =16
+                              LayoutMinWidth: =16
+                              PaddingBottom: =0
+                              PaddingLeft: =12
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Size: =12
+                              Text: |-
+                                =Coalesce(varCurrentAsset.DeviceName, "") & "   |   " &
+                                 CountRows(Filter(colAssetTimeline, Kind = "Move")) & " moves" &
+                                 "   |   " & CountRows(Filter(colAssetTimeline, Kind = "Issue")) & " issues" &
+                                 "   |   " & CountRows(Filter(colAssetTimeline, Kind = "Booking")) & " bookings"
+                              Width: =Parent.Width
+                              X: =103
+            - conHistFilters:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  FillPortions: =0
+                  Height: =52
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutGap: =8
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  LayoutWrap: =true
+                  PaddingBottom: =8
+                  PaddingLeft: =8
+                  PaddingRight: =8
+                  PaddingTop: =8
+                  Width: =Parent.Width
+                Children:
+                  - btnHistAll:
+                      Control: Classic/Button@2.2.0
+                      Properties:
+                        BorderColor: =RGBA(0, 120, 212, 1)
+                        BorderStyle: =BorderStyle.None
+                        BorderThickness: =1
+                        Color: =If(varHistFilter = "All", RGBA(255, 255, 255, 1), RGBA(0, 120, 212, 1))
+                        DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        DisabledFill: =RGBA(242, 242, 241, 0)
+                        Fill: =If(varHistFilter = "All", RGBA(0, 120, 212, 1), RGBA(255, 255, 255, 1))
+                        Font: =Font.'Segoe UI'
+                        Height: =32
+                        HoverBorderColor: =RGBA(0, 0, 0, 0)
+                        HoverColor: =RGBA(255, 255, 255, 1)
+                        HoverFill: =If(varHistFilter = "All", RGBA(16, 110, 190, 1), RGBA(235, 243, 252, 1))
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        OnSelect: =Set(varHistFilter, "All")
+                        PressedBorderColor: =RGBA(0, 69, 120, 1)
+                        PressedColor: =RGBA(255, 255, 255, 1)
+                        PressedFill: =RGBA(16, 110, 190, 1)
+                        RadiusBottomLeft: =16
+                        RadiusBottomRight: =16
+                        RadiusTopLeft: =16
+                        RadiusTopRight: =16
+                        Size: =11
+                        Text: ="All"
+                        Width: =90
+                  - btnHistMoves:
+                      Control: Classic/Button@2.2.0
+                      Properties:
+                        BorderColor: =RGBA(0, 120, 212, 1)
+                        BorderStyle: =BorderStyle.None
+                        BorderThickness: =1
+                        Color: =If(varHistFilter = "Move", RGBA(255, 255, 255, 1), RGBA(0, 120, 212, 1))
+                        DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        DisabledFill: =RGBA(242, 242, 241, 0)
+                        Fill: =If(varHistFilter = "Move", RGBA(0, 120, 212, 1), RGBA(255, 255, 255, 1))
+                        Font: =Font.'Segoe UI'
+                        Height: =32
+                        HoverBorderColor: =RGBA(0, 0, 0, 0)
+                        HoverColor: =RGBA(255, 255, 255, 1)
+                        HoverFill: =If(varHistFilter = "Move", RGBA(16, 110, 190, 1), RGBA(235, 243, 252, 1))
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        OnSelect: =Set(varHistFilter, "Move")
+                        PressedBorderColor: =RGBA(0, 69, 120, 1)
+                        PressedColor: =RGBA(255, 255, 255, 1)
+                        PressedFill: =RGBA(16, 110, 190, 1)
+                        RadiusBottomLeft: =16
+                        RadiusBottomRight: =16
+                        RadiusTopLeft: =16
+                        RadiusTopRight: =16
+                        Size: =11
+                        Text: ="Moves"
+                        Width: =130
+                  - btnHistIssues:
+                      Control: Classic/Button@2.2.0
+                      Properties:
+                        BorderColor: =RGBA(0, 120, 212, 1)
+                        BorderStyle: =BorderStyle.None
+                        BorderThickness: =1
+                        Color: =If(varHistFilter = "Issue", RGBA(255, 255, 255, 1), RGBA(0, 120, 212, 1))
+                        DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        DisabledFill: =RGBA(242, 242, 241, 0)
+                        Fill: =If(varHistFilter = "Issue", RGBA(0, 120, 212, 1), RGBA(255, 255, 255, 1))
+                        Font: =Font.'Segoe UI'
+                        Height: =32
+                        HoverBorderColor: =RGBA(0, 0, 0, 0)
+                        HoverColor: =RGBA(255, 255, 255, 1)
+                        HoverFill: =If(varHistFilter = "Issue", RGBA(16, 110, 190, 1), RGBA(235, 243, 252, 1))
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        OnSelect: =Set(varHistFilter, "Issue")
+                        PressedBorderColor: =RGBA(0, 69, 120, 1)
+                        PressedColor: =RGBA(255, 255, 255, 1)
+                        PressedFill: =RGBA(16, 110, 190, 1)
+                        RadiusBottomLeft: =16
+                        RadiusBottomRight: =16
+                        RadiusTopLeft: =16
+                        RadiusTopRight: =16
+                        Size: =11
+                        Text: ="Issues"
+                        Width: =120
+                  - btnHistBookings:
+                      Control: Classic/Button@2.2.0
+                      Properties:
+                        BorderColor: =RGBA(0, 120, 212, 1)
+                        BorderStyle: =BorderStyle.None
+                        BorderThickness: =1
+                        Color: =If(varHistFilter = "Booking", RGBA(255, 255, 255, 1), RGBA(0, 120, 212, 1))
+                        DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        DisabledFill: =RGBA(242, 242, 241, 0)
+                        Fill: =If(varHistFilter = "Booking", RGBA(0, 120, 212, 1), RGBA(255, 255, 255, 1))
+                        Font: =Font.'Segoe UI'
+                        Height: =32
+                        HoverBorderColor: =RGBA(0, 0, 0, 0)
+                        HoverColor: =RGBA(255, 255, 255, 1)
+                        HoverFill: =If(varHistFilter = "Booking", RGBA(16, 110, 190, 1), RGBA(235, 243, 252, 1))
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        OnSelect: =Set(varHistFilter, "Booking")
+                        PressedBorderColor: =RGBA(0, 69, 120, 1)
+                        PressedColor: =RGBA(255, 255, 255, 1)
+                        PressedFill: =RGBA(16, 110, 190, 1)
+                        RadiusBottomLeft: =16
+                        RadiusBottomRight: =16
+                        RadiusTopLeft: =16
+                        RadiusTopRight: =16
+                        Size: =11
+                        Text: ="Bookings"
+                        Width: =120
+            - galTimeline:
+                Control: Gallery@2.15.0
+                Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  BorderColor: =RGBA(245, 245, 245, 1)
+                  Height: =Parent.Height
+                  Items: |-
+                    =Sort(
+                        Filter(
+                            colAssetTimeline,
+                            varHistFilter = "All"
+                                || Kind = varHistFilter
+                                || (varHistFilter = "Issue" && Kind = "Resolved")
+                                || (varHistFilter = "Move" && Kind = "Handover")
+                        ),
+                        SortKey,
+                        SortOrder.Descending
+                    )
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  TemplateSize: =84
+                  Width: =Parent.Width - 16
+                Children:
+                  - recTimelineDot:
+                      Control: Rectangle@2.3.0
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 0)
+                        Fill: |-
+                          =Switch(
+                              ThisItem.Kind,
+                              "Move", RGBA(0, 120, 212, 1),
+                              "Handover",   RGBA(0, 90, 158, 1),
+                              "Issue",      RGBA(196, 89, 17, 1),
+                              "Resolved",     RGBA(16, 124, 16, 1),
+                              "Booking",   RGBA(122, 60, 190, 1),
+                              "Maintenance",    RGBA(0, 153, 153, 1),
+                              RGBA(161, 159, 157, 1)
+                          )
+                        Height: =Parent.TemplateHeight - 10
+                        OnSelect: =Select(Parent)
+                        Visible: =ThisItem.IsSelected
+                        Width: =4
+                        X: =10
+                        Y: =4
+                  - lblTlSoort:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: |-
+                          =Switch(
+                              ThisItem.Kind,
+                              "Move", RGBA(0, 120, 212, 1),
+                              "Handover",   RGBA(0, 90, 158, 1),
+                              "Issue",      RGBA(196, 89, 17, 1),
+                              "Resolved",     RGBA(16, 124, 16, 1),
+                              "Booking",   RGBA(122, 60, 190, 1),
+                              "Maintenance",    RGBA(0, 153, 153, 1),
+                              RGBA(96, 94, 92, 1)
+                          )
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =18
+                        OnSelect: =Select(Parent)
+                        PaddingBottom: =0
+                        PaddingLeft: =4
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =10
+                        Text: =Upper(ThisItem.Kind)
+                        Width: =160
+                        Wrap: =false
+                        X: =22
+                        Y: =8
+                  - lblTlWanneer:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Right
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(161, 159, 157, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =If(ThisItem.IsSelected, FontWeight.Semibold, FontWeight.Normal)
+                        Height: =18
+                        OnSelect: =Select(Parent)
+                        PaddingBottom: =0
+                        PaddingLeft: =12
+                        PaddingRight: =12
+                        PaddingTop: =0
+                        Size: =10
+                        Text: =ThisItem.EventTime
+                        Width: =160
+                        Wrap: =false
+                        X: =Parent.TemplateWidth - Self.Width - 8
+                        Y: =8
+                  - lblTlSamenvatting:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(50, 49, 48, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =22
+                        OnSelect: =Select(Parent)
+                        PaddingBottom: =0
+                        PaddingLeft: =4
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Text: =ThisItem.Summary
+                        Width: =Parent.TemplateWidth - 40
+                        Wrap: =false
+                        X: =22
+                        Y: =28
+                  - lblTlDetail:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(96, 94, 92, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =If(ThisItem.IsSelected, FontWeight.Semibold, FontWeight.Normal)
+                        Height: =20
+                        OnSelect: =Select(Parent)
+                        PaddingBottom: =0
+                        PaddingLeft: =4
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =11
+                        Text: |-
+                          ="by " & ThisItem.Who &
+                           If(IsBlank(ThisItem.Detail), "", "   |   " & Left(ThisItem.Detail, 110))
+                        Width: =Parent.TemplateWidth - 40
+                        Wrap: =false
+                        X: =22
+                        Y: =52
+                  - recTlSep:
+                      Control: Rectangle@2.3.0
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 0)
+                        Fill: =RGBA(240, 240, 240, 1)
+                        Height: =1
+                        OnSelect: =Select(Parent)
+                        Visible: =ThisItem.IsSelected
+                        Width: =Parent.TemplateWidth
+                        Y: =Parent.TemplateHeight - 1
+            - lblTimelineEmpty:
+                Control: Label@2.5.1
+                Properties:
+                  Align: =Align.Center
+                  BorderColor: =RGBA(0, 0, 0, 1)
+                  Color: =RGBA(161, 159, 157, 1)
+                  DisabledColor: =RGBA(161, 159, 157, 1)
+                  Font: =Font.'Segoe UI'
+                  Height: =70
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  PaddingBottom: =0
+                  PaddingLeft: =12
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  Size: =12
+                  Text: |-
+                    =If(
+                        varHistFilter = "All",
+                        "Nothing has been recorded for this asset yet.",
+                        "No events of this type for this asset."
+                    )
+                  Visible: =CountRows(galTimeline.AllItems) = 0
+                  Width: =Parent.Width - 16
+                  X: =103

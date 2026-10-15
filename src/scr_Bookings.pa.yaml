@@ -1,0 +1,1286 @@
+# ************************************************************************************************
+# Warning: YAML source code for Canvas Apps should only be used to review changes made within Power Apps Studio and for minor edits (Preview).
+# Use the maker portal to create and edit your Power Apps.
+# 
+# The schema file for Canvas Apps is available at https://go.microsoft.com/fwlink/?linkid=2304907
+# 
+# For more information, visit https://go.microsoft.com/fwlink/?linkid=2292623
+# ************************************************************************************************
+Screens:
+  scr_Bookings:
+    Properties:
+      Fill: =RGBA(255, 255, 255, 1)
+      LoadingSpinnerColor: =RGBA(0, 120, 212, 1)
+      OnVisible: |-
+        =If(IsBlank(varBookingView), Set(varBookingView, "calendar"));
+        If(IsBlank(varCalMonth), Set(varCalMonth, Date(Year(Today()), Month(Today()), 1)));
+        If(IsBlank(varCalDay), Set(varCalDay, Today()))
+    Children:
+      - conBookings:
+          Control: GroupContainer@1.5.0
+          Variant: AutoLayout
+          Properties:
+            Height: =Parent.Height
+            LayoutAlignItems: =LayoutAlignItems.Center
+            LayoutDirection: =LayoutDirection.Vertical
+            PaddingBottom: =8
+            PaddingLeft: =8
+            PaddingRight: =8
+            PaddingTop: =8
+            Width: =Parent.Width
+          Children:
+            - conBookingsHeader:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  FillPortions: =0
+                  Height: =If(Parent.Width < 600, 110, 70)
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutGap: =10
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  LayoutWrap: =true
+                  PaddingBottom: =8
+                  PaddingLeft: =8
+                  PaddingRight: =8
+                  PaddingTop: =8
+                  Width: =Parent.Width
+                Children:
+                  - icoBookingsBack:
+                      Control: Classic/Icon@2.5.0
+                      Properties:
+                        AccessibleLabel: ="Back to home"
+                        BorderColor: =RGBA(0, 0, 0, 0)
+                        Color: =RGBA(96, 94, 92, 1)
+                        DisabledBorderColor: =RGBA(245, 245, 245, 1)
+                        DisabledColor: =RGBA(225, 223, 221, 1)
+                        DisabledFill: =RGBA(0, 0, 0, 0)
+                        FocusedBorderThickness: =4
+                        Height: =34
+                        HoverBorderColor: =RGBA(0, 0, 0, 0)
+                        HoverColor: =RGBA(16, 110, 190, 1)
+                        HoverFill: =RGBA(0, 0, 0, 0)
+                        Icon: =Icon.BackArrow
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        OnSelect: =Navigate(scr_Home, ScreenTransition.Fade)
+                        PressedBorderColor: =RGBA(0, 0, 0, 0)
+                        PressedColor: =RGBA(16, 110, 190, 1)
+                        PressedFill: =RGBA(0, 0, 0, 0)
+                        Tooltip: ="Back"
+                        Width: =34
+                        X: =010
+                        Y: =(Parent.Height - Self.Height) / 2
+                  - lblBookingsTitle:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(50, 49, 48, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        FillPortions: =1
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =Self.Size * 2.9
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        PaddingBottom: =0
+                        PaddingLeft: =12
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =If(Parent.Width < 400, 16, If(Parent.Width < 600, 18, 20))
+                        Text: ="Bookings"
+                        Width: =Parent.Width
+                        X: =103
+                  - btnNewBooking:
+                      Control: Classic/Button@2.2.0
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 0)
+                        BorderStyle: =BorderStyle.None
+                        Color: =RGBA(255, 255, 255, 1)
+                        DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        DisabledFill: =RGBA(242, 242, 241, 0)
+                        Fill: =RGBA(0, 120, 212, 1)
+                        Font: =Font.'Segoe UI'
+                        Height: =38
+                        HoverBorderColor: =RGBA(0, 0, 0, 0)
+                        HoverColor: =RGBA(255, 255, 255, 1)
+                        HoverFill: =RGBA(16, 110, 190, 1)
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        OnSelect: |-
+                          =Set(varCurrentBooking, Blank());
+                          Set(varCurrentAsset, Blank());
+                          Set(varCurrentSetup, Blank());
+                          Navigate(scr_BookingDetail, ScreenTransition.Fade)
+                        PressedBorderColor: =RGBA(0, 69, 120, 1)
+                        PressedColor: =RGBA(255, 255, 255, 1)
+                        PressedFill: =RGBA(16, 110, 190, 1)
+                        RadiusBottomLeft: =4
+                        RadiusBottomRight: =4
+                        RadiusTopLeft: =4
+                        RadiusTopRight: =4
+                        Size: =12
+                        Text: ="+ New booking"
+                        Width: =If(Parent.Width < 600, Parent.Width - 16, 170)
+            - conViewToggle:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  FillPortions: =0
+                  Height: =48
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutGap: =8
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  PaddingBottom: =8
+                  PaddingLeft: =8
+                  PaddingRight: =8
+                  PaddingTop: =8
+                  Width: =Parent.Width
+                Children:
+                  - btnViewCalendar:
+                      Control: Classic/Button@2.2.0
+                      Properties:
+                        BorderColor: =RGBA(0, 120, 212, 1)
+                        BorderStyle: =BorderStyle.None
+                        BorderThickness: =1
+                        Color: =If(varBookingView = "calendar", RGBA(255, 255, 255, 1), RGBA(0, 120, 212, 1))
+                        DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        DisabledFill: =RGBA(242, 242, 241, 0)
+                        Fill: =If(varBookingView = "calendar", RGBA(0, 120, 212, 1), RGBA(255, 255, 255, 1))
+                        Font: =Font.'Segoe UI'
+                        Height: =34
+                        HoverBorderColor: =RGBA(0, 0, 0, 0)
+                        HoverColor: =RGBA(255, 255, 255, 1)
+                        HoverFill: =If(varBookingView = "calendar", RGBA(16, 110, 190, 1), RGBA(235, 243, 252, 1))
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        OnSelect: =Set(varBookingView, "calendar")
+                        PressedBorderColor: =RGBA(0, 69, 120, 1)
+                        PressedColor: =RGBA(255, 255, 255, 1)
+                        PressedFill: =RGBA(16, 110, 190, 1)
+                        RadiusBottomLeft: =17
+                        RadiusBottomRight: =17
+                        RadiusTopLeft: =17
+                        RadiusTopRight: =17
+                        Size: =12
+                        Text: ="Calendar"
+                        Width: =120
+                  - btnViewList:
+                      Control: Classic/Button@2.2.0
+                      Properties:
+                        BorderColor: =RGBA(0, 120, 212, 1)
+                        BorderStyle: =BorderStyle.None
+                        BorderThickness: =1
+                        Color: =If(varBookingView = "list", RGBA(255, 255, 255, 1), RGBA(0, 120, 212, 1))
+                        DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        DisabledFill: =RGBA(242, 242, 241, 0)
+                        Fill: =If(varBookingView = "list", RGBA(0, 120, 212, 1), RGBA(255, 255, 255, 1))
+                        Font: =Font.'Segoe UI'
+                        Height: =34
+                        HoverBorderColor: =RGBA(0, 0, 0, 0)
+                        HoverColor: =RGBA(255, 255, 255, 1)
+                        HoverFill: =If(varBookingView = "list", RGBA(16, 110, 190, 1), RGBA(235, 243, 252, 1))
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        OnSelect: =Set(varBookingView, "list")
+                        PressedBorderColor: =RGBA(0, 69, 120, 1)
+                        PressedColor: =RGBA(255, 255, 255, 1)
+                        PressedFill: =RGBA(16, 110, 190, 1)
+                        RadiusBottomLeft: =17
+                        RadiusBottomRight: =17
+                        RadiusTopLeft: =17
+                        RadiusTopRight: =17
+                        Size: =12
+                        Text: ="List"
+                        Width: =100
+            - conBookingDevice:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  FillPortions: =0
+                  Height: |-
+                    =If(
+                        IsBlank(txtBkDeviceSearch.Text),
+                        If(Parent.Width < 600, 178, 130),
+                        If(Parent.Width < 600, 360, 320)
+                    )
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutGap: =8
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  LayoutWrap: =true
+                  PaddingBottom: =8
+                  PaddingLeft: =8
+                  PaddingRight: =8
+                  PaddingTop: =8
+                  Width: =Parent.Width
+                Children:
+                  - conBkDeviceField:
+                      Control: GroupContainer@1.5.0
+                      Variant: AutoLayout
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        FillPortions: =0
+                        Height: =If(IsBlank(txtBkDeviceSearch.Text), 118, 300)
+                        LayoutAlignItems: =LayoutAlignItems.Center
+                        LayoutDirection: =LayoutDirection.Vertical
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        PaddingBottom: =8
+                        PaddingLeft: =8
+                        PaddingRight: =8
+                        PaddingTop: =8
+                        Width: =If(Parent.Width < 600, Parent.Width - 100, 380)
+                      Children:
+                        - lblBkDeviceCaption:
+                            Control: Label@2.5.1
+                            Properties:
+                              BorderColor: =RGBA(0, 0, 0, 1)
+                              Color: =RGBA(96, 94, 92, 1)
+                              DisabledColor: =RGBA(161, 159, 157, 1)
+                              Font: =Font.'Segoe UI'
+                              FontWeight: =FontWeight.Semibold
+                              Height: =22
+                              LayoutMinHeight: =16
+                              LayoutMinWidth: =16
+                              PaddingBottom: =0
+                              PaddingLeft: =12
+                              PaddingRight: =0
+                              PaddingTop: =0
+                              Size: =11
+                              Text: ="DEVICE"
+                              VerticalAlign: =VerticalAlign.Top
+                              Width: =Parent.Width
+                              X: =103
+                        - lblBkDeviceChosen:
+                            Control: Label@2.5.1
+                            Properties:
+                              BorderColor: =RGBA(0, 0, 0, 1)
+                              Color: |-
+                                =If(
+                                    IsBlank(varBookingDevice),
+                                    RGBA(161, 159, 157, 1),
+                                    RGBA(50, 49, 48, 1)
+                                )
+                              DisabledColor: =RGBA(161, 159, 157, 1)
+                              Fill: =RGBA(243, 242, 241, 1)
+                              Font: =Font.'Segoe UI'
+                              FontWeight: =FontWeight.Semibold
+                              Height: =Self.Size * 3.4
+                              LayoutMinHeight: =16
+                              LayoutMinWidth: =16
+                              PaddingBottom: =0
+                              PaddingLeft: =10
+                              PaddingRight: =10
+                              PaddingTop: =0
+                              Size: =12
+                              Text: |-
+                                =If(
+                                    IsBlank(varBookingDevice),
+                                    "Nothing chosen - type below to search",
+                                    With(
+                                        { a: LookUp(Equipment_Assets, Titel = varBookingDevice) },
+                                        varBookingDevice & " - " & Coalesce(a.DeviceName, "?")
+                                            & If(IsBlank(a.Manufacturer), "", "  (" & a.Manufacturer & ")")
+                                    )
+                                )
+                              Width: =Parent.Width
+                              X: =103
+                        - txtBkDeviceSearch:
+                            Control: Classic/TextInput@2.3.2
+                            Properties:
+                              BorderColor: =RGBA(219, 219, 219, 1)
+                              Color: =RGBA(50, 49, 48, 1)
+                              Default: =""
+                              DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                              DisabledColor: =RGBA(161, 159, 157, 1)
+                              DisabledFill: =RGBA(242, 242, 241, 0)
+                              Font: =Font.'Segoe UI'
+                              HintText: =If(Parent.Width < 600, "Search ID, device, maker", "Type to search by ID, device or manufacturer")
+                              HoverBorderColor: =RGBA(16, 110, 190, 1)
+                              HoverColor: =RGBA(50, 49, 48, 1)
+                              HoverFill: =RGBA(255, 255, 255, 1)
+                              LayoutMinHeight: =16
+                              LayoutMinWidth: =16
+                              PressedBorderColor: =RGBA(0, 120, 212, 1)
+                              PressedColor: =RGBA(50, 49, 48, 1)
+                              PressedFill: =RGBA(255, 255, 255, 1)
+                              RadiusBottomLeft: =0
+                              RadiusBottomRight: =0
+                              RadiusTopLeft: =0
+                              RadiusTopRight: =0
+                              Width: =Parent.Width
+                              Y: =(Parent.Height - Self.Height) / 2
+                        - galBkDeviceResults:
+                            Control: Gallery@2.15.0
+                            Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                            Properties:
+                              AlignInContainer: =AlignInContainer.SetByContainer
+                              BorderColor: =RGBA(240, 240, 240, 1)
+                              Height: =Parent.Height
+                              Items: |-
+                                =With(
+                                    { q: Lower(Trim(txtBkDeviceSearch.Text)) },
+                                    FirstN(
+                                        Sort(
+                                            Filter(
+                                                Equipment_Assets,
+                                                !IsBlank(Find(q, Lower(Coalesce(Titel, ""))))
+                                                    || !IsBlank(Find(q, Lower(Coalesce(DeviceName, ""))))
+                                                    || !IsBlank(Find(q, Lower(Coalesce(Manufacturer, ""))))
+                                                    || !IsBlank(Find(q, Lower(Coalesce(SerialNumber, ""))))
+                                            ),
+                                            Titel
+                                        ),
+                                        25
+                                    )
+                                )
+                              LayoutMinHeight: =16
+                              LayoutMinWidth: =16
+                              TemplateSize: =If(Parent.Width < 600, 84, 66)
+                              Visible: =!IsBlank(txtBkDeviceSearch.Text)
+                              Width: =Parent.Width
+                            Children:
+                              - lblBkDeviceRowName:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    BorderColor: =RGBA(0, 0, 0, 1)
+                                    Color: =RGBA(50, 49, 48, 1)
+                                    DisabledColor: =RGBA(161, 159, 157, 1)
+                                    Font: =Font.'Segoe UI'
+                                    FontWeight: =FontWeight.Semibold
+                                    Height: =If(Parent.TemplateWidth < 420, 58, 40)
+                                    OnSelect: |-
+                                      =Set(varBookingDevice, ThisItem.Titel);
+                                      Reset(txtBkDeviceSearch)
+                                    PaddingBottom: =0
+                                    PaddingLeft: =8
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Size: =12
+                                    Text: |-
+                                      =ThisItem.Titel & " - " & ThisItem.DeviceName &
+                                      If(
+                                          IsBlank(ThisItem.Manufacturer),
+                                          "",
+                                          "  (" & ThisItem.Manufacturer & ")"
+                                      )
+                                    Width: =Parent.TemplateWidth - 8
+                                    X: =4
+                                    Y: =4
+                              - lblBkDeviceRowSub:
+                                  Control: Label@2.5.1
+                                  Properties:
+                                    BorderColor: =RGBA(0, 0, 0, 1)
+                                    Color: =RGBA(96, 94, 92, 1)
+                                    DisabledColor: =RGBA(161, 159, 157, 1)
+                                    Font: =Font.'Segoe UI'
+                                    FontWeight: =If(ThisItem.IsSelected, FontWeight.Semibold, FontWeight.Normal)
+                                    Height: =18
+                                    OnSelect: |-
+                                      =Set(varBookingDevice, ThisItem.Titel);
+                                      Reset(txtBkDeviceSearch)
+                                    PaddingBottom: =0
+                                    PaddingLeft: =8
+                                    PaddingRight: =0
+                                    PaddingTop: =0
+                                    Size: =10
+                                    Text: |-
+                                      ="SN " & Coalesce(ThisItem.SerialNumber, "-") &
+                                       "   |   " & Coalesce(ThisItem.CurrentCampus.Value, "?") &
+                                       " / " & Coalesce(ThisItem.'CurrentLocation (CurrentLocation0)'.Value, "?") &
+                                       "   |   " & Coalesce(ThisItem.Status.Value, "")
+                                    VerticalAlign: =VerticalAlign.Top
+                                    Width: =Parent.TemplateWidth - 8
+                                    Wrap: =false
+                                    X: =4
+                                    Y: =lblBkDeviceRowName.Y + lblBkDeviceRowName.Height
+                              - recBkDeviceRowSep:
+                                  Control: Rectangle@2.3.0
+                                  Properties:
+                                    BorderColor: =RGBA(0, 0, 0, 0)
+                                    Fill: =RGBA(240, 240, 240, 1)
+                                    Height: =1
+                                    OnSelect: |-
+                                      =Set(varBookingDevice, ThisItem.Titel);
+                                      Reset(txtBkDeviceSearch)
+                                    Visible: =ThisItem.IsSelected
+                                    Width: =Parent.TemplateWidth
+                                    Y: =Parent.TemplateHeight - 1
+                  - btnBkDeviceClear:
+                      Control: Classic/Button@2.2.0
+                      Properties:
+                        BorderColor: =RGBA(219, 219, 219, 1)
+                        BorderStyle: =BorderStyle.None
+                        Color: =RGBA(50, 49, 48, 1)
+                        DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        DisabledFill: =RGBA(242, 242, 241, 0)
+                        DisplayMode: |-
+                          =If(
+                              IsBlank(varBookingDevice)
+                                  && IsEmpty(colGroupFilter),
+                              DisplayMode.Disabled,
+                              DisplayMode.Edit
+                          )
+                        Fill: =RGBA(245, 245, 245, 1)
+                        Font: =Font.'Segoe UI'
+                        HoverBorderColor: =RGBA(0, 0, 0, 0)
+                        HoverColor: =RGBA(255, 255, 255, 1)
+                        HoverFill: =RGBA(230, 230, 230, 1)
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        OnSelect: |-
+                          =Set(varBookingDevice, "");
+                          Reset(txtBkDeviceSearch);
+                          Clear(colGroupFilter)
+                        PressedBorderColor: =RGBA(0, 69, 120, 1)
+                        PressedColor: =RGBA(255, 255, 255, 1)
+                        PressedFill: =RGBA(16, 110, 190, 1)
+                        RadiusBottomLeft: =4
+                        RadiusBottomRight: =4
+                        RadiusTopLeft: =4
+                        RadiusTopRight: =4
+                        Size: =12
+                        Text: ="Clear"
+                        Width: =80
+                        Y: =18
+            - conBookingGroups:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  FillPortions: =0
+                  Height: |-
+                    =18 + 8 + RoundUp(
+                        CountRows(Choices(Equipment_Assets.OwnerGroup)) / If(Parent.Width < 600, 2, 4),
+                        0
+                    ) * 38
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Vertical
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  PaddingBottom: =8
+                  PaddingLeft: =8
+                  PaddingRight: =8
+                  PaddingTop: =8
+                  Width: =Parent.Width
+                Children:
+                  - lblGroupChipsCaption:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(96, 94, 92, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =18
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        PaddingBottom: =0
+                        PaddingLeft: =12
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =10
+                        Text: |-
+                          ="LAB GROUPS - OWNER OR USER" &
+                           If(
+                               IsEmpty(colGroupFilter),
+                               "   (all)",
+                               "   (" & CountRows(colGroupFilter) & " selected)"
+                           )
+                        VerticalAlign: =VerticalAlign.Top
+                        Width: =Parent.Width
+                        X: =103
+                  - galGroupChips:
+                      Control: Gallery@2.15.0
+                      Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                      Properties:
+                        AlignInContainer: =AlignInContainer.SetByContainer
+                        BorderColor: =RGBA(255, 255, 255, 1)
+                        Height: =Parent.Height
+                        Items: =Sort(Choices(Equipment_Assets.OwnerGroup), Value)
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        TemplateSize: =38
+                        Width: =Parent.Width
+                        WrapCount: =If(Parent.Width < 600, 2, 4)
+                      Children:
+                        - btnGroupChip:
+                            Control: Classic/Button@2.2.0
+                            Properties:
+                              BorderColor: =RGBA(0, 120, 212, 1)
+                              BorderStyle: =BorderStyle.None
+                              BorderThickness: =1
+                              Color: |-
+                                =If(
+                                    ThisItem.Value in colGroupFilter.Value,
+                                    RGBA(255, 255, 255, 1),
+                                    RGBA(0, 120, 212, 1)
+                                )
+                              DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                              DisabledColor: =RGBA(161, 159, 157, 1)
+                              DisabledFill: =RGBA(242, 242, 241, 0)
+                              Fill: |-
+                                =If(
+                                    ThisItem.Value in colGroupFilter.Value,
+                                    RGBA(0, 120, 212, 1),
+                                    RGBA(255, 255, 255, 1)
+                                )
+                              Font: =Font.'Segoe UI'
+                              Height: =32
+                              HoverBorderColor: =RGBA(0, 0, 0, 0)
+                              HoverColor: =RGBA(255, 255, 255, 1)
+                              HoverFill: |-
+                                =If(
+                                    ThisItem.Value in colGroupFilter.Value,
+                                    RGBA(16, 110, 190, 1),
+                                    RGBA(235, 243, 252, 1)
+                                )
+                              OnSelect: |-
+                                =If(
+                                    ThisItem.Value in colGroupFilter.Value,
+                                    Remove(
+                                        colGroupFilter,
+                                        LookUp(colGroupFilter, Value = ThisItem.Value)
+                                    ),
+                                    Collect(colGroupFilter, { Value: ThisItem.Value })
+                                )
+                              PressedBorderColor: =RGBA(0, 69, 120, 1)
+                              PressedColor: =RGBA(255, 255, 255, 1)
+                              PressedFill: =RGBA(16, 110, 190, 1)
+                              RadiusBottomLeft: =16
+                              RadiusBottomRight: =16
+                              RadiusTopLeft: =16
+                              RadiusTopRight: =16
+                              Size: =11
+                              Text: =ThisItem.Value
+                              Width: =Parent.TemplateWidth - 8
+                              X: =4
+                              Y: =3
+            - conMonthNav:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  FillPortions: =0
+                  Height: =48
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutGap: =6
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  PaddingBottom: =8
+                  PaddingLeft: =8
+                  PaddingRight: =8
+                  PaddingTop: =8
+                  Visible: =varBookingView = "calendar"
+                  Width: =Parent.Width
+                Children:
+                  - icoPrevMonth:
+                      Control: Classic/Icon@2.5.0
+                      Properties:
+                        AccessibleLabel: ="Previous month"
+                        BorderColor: =RGBA(0, 0, 0, 0)
+                        Color: =RGBA(0, 120, 212, 1)
+                        DisabledBorderColor: =RGBA(245, 245, 245, 1)
+                        DisabledColor: =RGBA(225, 223, 221, 1)
+                        DisabledFill: =RGBA(0, 0, 0, 0)
+                        FocusedBorderThickness: =4
+                        Height: =30
+                        HoverBorderColor: =RGBA(0, 0, 0, 0)
+                        HoverColor: =RGBA(16, 110, 190, 1)
+                        HoverFill: =RGBA(235, 243, 252, 1)
+                        Icon: =Icon.ChevronLeft
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        OnSelect: =Set(varCalMonth, DateAdd(varCalMonth, -1, TimeUnit.Months))
+                        PressedBorderColor: =RGBA(0, 0, 0, 0)
+                        PressedColor: =RGBA(16, 110, 190, 1)
+                        PressedFill: =RGBA(0, 0, 0, 0)
+                        Tooltip: ="Previous month"
+                        Width: =34
+                        X: =010
+                        Y: =(Parent.Height - Self.Height) / 2
+                  - lblCalMonth:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(50, 49, 48, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        FillPortions: =1
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =34
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        PaddingBottom: =0
+                        PaddingLeft: =12
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =14
+                        Text: =Text(varCalMonth, "mmmm yyyy")
+                        Width: =Parent.Width
+                        X: =103
+                  - icoNextMonth:
+                      Control: Classic/Icon@2.5.0
+                      Properties:
+                        AccessibleLabel: ="Next month"
+                        BorderColor: =RGBA(0, 0, 0, 0)
+                        Color: =RGBA(0, 120, 212, 1)
+                        DisabledBorderColor: =RGBA(245, 245, 245, 1)
+                        DisabledColor: =RGBA(225, 223, 221, 1)
+                        DisabledFill: =RGBA(0, 0, 0, 0)
+                        FocusedBorderThickness: =4
+                        Height: =30
+                        HoverBorderColor: =RGBA(0, 0, 0, 0)
+                        HoverColor: =RGBA(16, 110, 190, 1)
+                        HoverFill: =RGBA(235, 243, 252, 1)
+                        Icon: =Icon.ChevronRight
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        OnSelect: =Set(varCalMonth, DateAdd(varCalMonth, 1, TimeUnit.Months))
+                        PressedBorderColor: =RGBA(0, 0, 0, 0)
+                        PressedColor: =RGBA(16, 110, 190, 1)
+                        PressedFill: =RGBA(0, 0, 0, 0)
+                        Tooltip: ="Next month"
+                        Width: =34
+                        X: =010
+                        Y: =(Parent.Height - Self.Height) / 2
+                  - btnCalToday:
+                      Control: Classic/Button@2.2.0
+                      Properties:
+                        BorderColor: =RGBA(219, 219, 219, 1)
+                        BorderStyle: =BorderStyle.None
+                        BorderThickness: =1
+                        Color: =RGBA(96, 94, 92, 1)
+                        DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        DisabledFill: =RGBA(242, 242, 241, 0)
+                        Fill: =RGBA(255, 255, 255, 1)
+                        Font: =Font.'Segoe UI'
+                        Height: =32
+                        HoverBorderColor: =RGBA(0, 0, 0, 0)
+                        HoverColor: =RGBA(255, 255, 255, 1)
+                        HoverFill: =RGBA(243, 242, 241, 1)
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        OnSelect: |-
+                          =Set(varCalMonth, Date(Year(Today()), Month(Today()), 1));
+                          Set(varCalDay, Today())
+                        PressedBorderColor: =RGBA(0, 69, 120, 1)
+                        PressedColor: =RGBA(255, 255, 255, 1)
+                        PressedFill: =RGBA(16, 110, 190, 1)
+                        RadiusBottomLeft: =4
+                        RadiusBottomRight: =4
+                        RadiusTopLeft: =4
+                        RadiusTopRight: =4
+                        Size: =11
+                        Text: ="Today"
+                        Width: =74
+            - conWeekdays:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  FillPortions: =0
+                  Height: =24
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  PaddingBottom: =8
+                  PaddingLeft: =8
+                  PaddingRight: =8
+                  PaddingTop: =8
+                  Visible: =varBookingView = "calendar"
+                  Width: =Parent.Width
+                Children:
+                  - lblWdMon:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(161, 159, 157, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        FillPortions: =1
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =18
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        PaddingBottom: =0
+                        PaddingLeft: =12
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =10
+                        Text: ="MON"
+                        VerticalAlign: =VerticalAlign.Top
+                        Width: =Parent.Width
+                        X: =103
+                  - lblWdTue:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(161, 159, 157, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        FillPortions: =1
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =18
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        PaddingBottom: =0
+                        PaddingLeft: =12
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =10
+                        Text: ="TUE"
+                        VerticalAlign: =VerticalAlign.Top
+                        Width: =Parent.Width
+                        X: =103
+                  - lblWdWed:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(161, 159, 157, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        FillPortions: =1
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =18
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        PaddingBottom: =0
+                        PaddingLeft: =12
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =10
+                        Text: ="WED"
+                        VerticalAlign: =VerticalAlign.Top
+                        Width: =Parent.Width
+                        X: =103
+                  - lblWdThu:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(161, 159, 157, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        FillPortions: =1
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =18
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        PaddingBottom: =0
+                        PaddingLeft: =12
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =10
+                        Text: ="THU"
+                        VerticalAlign: =VerticalAlign.Top
+                        Width: =Parent.Width
+                        X: =103
+                  - lblWdFri:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(161, 159, 157, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        FillPortions: =1
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =18
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        PaddingBottom: =0
+                        PaddingLeft: =12
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =10
+                        Text: ="FRI"
+                        VerticalAlign: =VerticalAlign.Top
+                        Width: =Parent.Width
+                        X: =103
+                  - lblWdSat:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(200, 198, 196, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        FillPortions: =1
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =18
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        PaddingBottom: =0
+                        PaddingLeft: =12
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =10
+                        Text: ="SAT"
+                        VerticalAlign: =VerticalAlign.Top
+                        Width: =Parent.Width
+                        X: =103
+                  - lblWdSun:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(200, 198, 196, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        FillPortions: =1
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =18
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        PaddingBottom: =0
+                        PaddingLeft: =12
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =10
+                        Text: ="SUN"
+                        VerticalAlign: =VerticalAlign.Top
+                        Width: =Parent.Width
+                        X: =103
+            - galCalendar:
+                Control: Gallery@2.15.0
+                Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  BorderColor: =RGBA(240, 240, 240, 1)
+                  FillPortions: =0
+                  Height: =If(Parent.Width < 600, 318, 372)
+                  Items: |-
+                    =With(
+                        {
+                            first: DateAdd(
+                                varCalMonth,
+                                -(Weekday(varCalMonth, StartOfWeek.Monday) - 1),
+                                TimeUnit.Days
+                            )
+                        },
+                        ForAll(
+                            Sequence(42) As s,
+                            With(
+                                { d: DateAdd(first, s.Value - 1, TimeUnit.Days) },
+                                {
+                                    CellDate: d,
+                                    DayNum: Day(d),
+                                    InMonth: Month(d) = Month(varCalMonth),
+                                    Bookings: CountRows(
+                                        Filter(
+                                            Equipment_Bookings As bk,
+                                            bk.StartDate <= d,
+                                            bk.EndDate >= d,
+                                            IsBlank(varBookingDevice)
+                                                || bk.Title = varBookingDevice,
+                                            IsEmpty(colGroupFilter)
+                                                || LookUp(Equipment_Assets, Titel = bk.Title).OwnerGroup.Value in colGroupFilter.Value
+                                                || LookUp(Equipment_Assets, Titel = bk.Title).UserGroup.Value in colGroupFilter.Value
+                                        )
+                                    )
+                                }
+                            )
+                        )
+                    )
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  ShowScrollbar: =false
+                  TemplateSize: =If(Parent.Width < 600, 52, 61)
+                  Visible: =varBookingView = "calendar"
+                  Width: =Parent.Width - 16
+                  WrapCount: =7
+                Children:
+                  - recCalCell:
+                      Control: Rectangle@2.3.0
+                      Properties:
+                        BorderColor: =RGBA(235, 235, 235, 1)
+                        BorderThickness: =1
+                        Fill: |-
+                          =If(
+                              ThisItem.CellDate = varCalDay, RGBA(0, 120, 212, 1),
+                              ThisItem.Bookings >= 3,        RGBA(247, 193, 122, 1),
+                              ThisItem.Bookings = 2,         RGBA(252, 221, 181, 1),
+                              ThisItem.Bookings = 1,         RGBA(254, 240, 217, 1),
+                              ThisItem.CellDate = Today(),   RGBA(222, 236, 249, 1),
+                              Not(ThisItem.InMonth),         RGBA(250, 250, 250, 1),
+                              RGBA(255, 255, 255, 1)
+                          )
+                        Height: =Parent.TemplateHeight - 2
+                        OnSelect: =Set(varCalDay, ThisItem.CellDate)
+                        Visible: =ThisItem.IsSelected
+                        Width: =Parent.TemplateWidth - 2
+                        X: =1
+                        Y: =1
+                  - lblCalDayNum:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: |-
+                          =If(
+                              ThisItem.CellDate = varCalDay, RGBA(255, 255, 255, 1),
+                              Not(ThisItem.InMonth),         RGBA(200, 198, 196, 1),
+                              RGBA(50, 49, 48, 1)
+                          )
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =If(ThisItem.CellDate = Today(), FontWeight.Semibold, FontWeight.Normal)
+                        Height: =22
+                        OnSelect: =Set(varCalDay, ThisItem.CellDate)
+                        PaddingBottom: =0
+                        PaddingLeft: =12
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =12
+                        Text: =ThisItem.DayNum
+                        Width: =Parent.TemplateWidth
+                        Wrap: =false
+                        Y: =5
+                  - lblCalDayCount:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: |-
+                          =If(
+                              ThisItem.CellDate = varCalDay,
+                              RGBA(255, 255, 255, 1),
+                              RGBA(120, 74, 8, 1)
+                          )
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =16
+                        OnSelect: =Set(varCalDay, ThisItem.CellDate)
+                        PaddingBottom: =0
+                        PaddingLeft: =12
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =9
+                        Text: =If(ThisItem.Bookings = 0, "", ThisItem.Bookings & "x")
+                        Visible: =ThisItem.Bookings > 0
+                        Width: =Parent.TemplateWidth
+                        Wrap: =false
+                        Y: =Parent.TemplateHeight - 22
+            - lblCalDayHeader:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 1)
+                  Color: =RGBA(96, 94, 92, 1)
+                  DisabledColor: =RGBA(161, 159, 157, 1)
+                  Fill: =RGBA(245, 245, 245, 1)
+                  Font: =Font.'Segoe UI'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =28
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  PaddingBottom: =0
+                  PaddingLeft: =12
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  Size: =11
+                  Text: |-
+                    =Upper(Text(varCalDay, DateTimeFormat.LongDate)) & "   -   " &
+                    CountRows(galDayBookings.AllItems) & " booking(s)" &
+                    If(
+                        IsEmpty(colGroupFilter),
+                        "",
+                        "   -   " & Concat(colGroupFilter, Value, ", ")
+                    )
+                  Visible: =varBookingView = "calendar"
+                  Width: =Parent.Width - 16
+                  Wrap: =false
+                  X: =103
+            - galDayBookings:
+                Control: Gallery@2.15.0
+                Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  BorderColor: =RGBA(245, 245, 245, 1)
+                  Height: =Parent.Height
+                  Items: |-
+                    =Sort(
+                        Filter(
+                            Equipment_Bookings As bk,
+                            bk.StartDate <= varCalDay,
+                            bk.EndDate >= varCalDay,
+                            IsBlank(varBookingDevice)
+                                || bk.Title = varBookingDevice,
+                            IsEmpty(colGroupFilter)
+                                || LookUp(Equipment_Assets, Titel = bk.Title).OwnerGroup.Value in colGroupFilter.Value
+                                || LookUp(Equipment_Assets, Titel = bk.Title).UserGroup.Value in colGroupFilter.Value
+                        ),
+                        StartDate,
+                        SortOrder.Ascending
+                    )
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  TemplateSize: =If(Parent.Width < 600, 76, 60)
+                  Visible: =varBookingView = "calendar"
+                  Width: =Parent.Width - 16
+                Children:
+                  - lblDayBkTitle:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(50, 49, 48, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =If(Parent.TemplateWidth < 600, 36, 22)
+                        OnSelect: |-
+                          =Set(varCurrentBooking, ThisItem);
+                          Navigate(scr_BookingDetail, ScreenTransition.Fade)
+                        PaddingBottom: =0
+                        PaddingLeft: =8
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Text: |-
+                          =With(
+                              { a: LookUp(Equipment_Assets, Titel = ThisItem.Title) },
+                              Coalesce(a.DeviceName, ThisItem.Title, "?")
+                                  & "   (" & Coalesce(ThisItem.Title, "?") & ")"
+                                  & If(IsBlank(ThisItem.LinkedSetupID), "", "   setup " & ThisItem.LinkedSetupID)
+                          )
+                        Width: =Parent.TemplateWidth - 24
+                        X: =8
+                        Y: =6
+                  - lblDayBkMeta:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(96, 94, 92, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =If(ThisItem.IsSelected, FontWeight.Semibold, FontWeight.Normal)
+                        Height: =20
+                        OnSelect: |-
+                          =Set(varCurrentBooking, ThisItem);
+                          Navigate(scr_BookingDetail, ScreenTransition.Fade)
+                        PaddingBottom: =0
+                        PaddingLeft: =8
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =11
+                        Text: |-
+                          =With(
+                              { a: LookUp(Equipment_Assets, Titel = ThisItem.Title) },
+                              Text(ThisItem.StartDate, DateTimeFormat.ShortDate) & " - " &
+                              Text(ThisItem.EndDate, DateTimeFormat.ShortDate) &
+                              "   |   " & Coalesce(ThisItem.ReservedBy.DisplayName, "?") &
+                              If(IsBlank(a.OwnerGroup.Value), "", "   |   " & a.OwnerGroup.Value) &
+                              If(IsBlank(a.'CurrentLocation (CurrentLocation0)'.Value), "", "   |   " & a.'CurrentLocation (CurrentLocation0)'.Value) &
+                              If(IsBlank(ThisItem.ProjectCode), "", "   |   " & ThisItem.ProjectCode)
+                          )
+                        Width: =Parent.TemplateWidth - 24
+                        Wrap: =false
+                        X: =8
+                        Y: =lblDayBkTitle.Y + lblDayBkTitle.Height
+                  - recDayBkSep:
+                      Control: Rectangle@2.3.0
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 0)
+                        Fill: =RGBA(240, 240, 240, 1)
+                        Height: =1
+                        OnSelect: |-
+                          =Set(varCurrentBooking, ThisItem);
+                          Navigate(scr_BookingDetail, ScreenTransition.Fade)
+                        Visible: =ThisItem.IsSelected
+                        Width: =Parent.TemplateWidth
+                        Y: =Parent.TemplateHeight - 1
+            - conBookingsFilter:
+                Control: GroupContainer@1.5.0
+                Variant: AutoLayout
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  FillPortions: =0
+                  Height: =56
+                  LayoutAlignItems: =LayoutAlignItems.Center
+                  LayoutDirection: =LayoutDirection.Horizontal
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  PaddingBottom: =8
+                  PaddingLeft: =8
+                  PaddingRight: =8
+                  PaddingTop: =8
+                  Visible: =varBookingView = "list"
+                  Width: =Parent.Width
+                Children:
+                  - drpBookingFilter:
+                      Control: Classic/DropDown@2.3.1
+                      Properties:
+                        BorderColor: =RGBA(219, 219, 219, 1)
+                        ChevronBackground: =RGBA(245, 245, 245, 1)
+                        ChevronDisabledBackground: =RGBA(242, 242, 241, 0)
+                        ChevronDisabledFill: =RGBA(161, 159, 157, 1)
+                        ChevronFill: =RGBA(50, 49, 48, 1)
+                        ChevronHoverBackground: =RGBA(245, 245, 245, 1)
+                        ChevronHoverFill: =RGBA(50, 49, 48, 1)
+                        Color: =RGBA(50, 49, 48, 1)
+                        Default: ="Current and upcoming"
+                        DisabledBorderColor: =RGBA(0, 0, 0, 0)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        DisabledFill: =RGBA(242, 242, 241, 0)
+                        FillPortions: =1
+                        Font: =Font.'Segoe UI'
+                        HoverBorderColor: =RGBA(16, 110, 190, 1)
+                        HoverColor: =RGBA(50, 49, 48, 1)
+                        HoverFill: =RGBA(245, 245, 245, 1)
+                        Items: =["Current and upcoming", "My bookings only", "All"]
+                        Items.Value: =Value
+                        LayoutMinHeight: =16
+                        LayoutMinWidth: =16
+                        PaddingBottom: =5
+                        PaddingRight: =5
+                        PaddingTop: =5
+                        PressedBorderColor: =RGBA(16, 110, 190, 1)
+                        PressedColor: =RGBA(255, 255, 255, 1)
+                        PressedFill: =RGBA(0, 120, 212, 1)
+                        SelectionColor: =RGBA(50, 49, 48, 1)
+                        SelectionFill: =RGBA(0, 120, 212, 1)
+            - galBookings:
+                Control: Gallery@2.15.0
+                Variant: BrowseLayout_Vertical_TwoTextOneImageVariant_ver5.0
+                Properties:
+                  AlignInContainer: =AlignInContainer.SetByContainer
+                  BorderColor: =RGBA(245, 245, 245, 1)
+                  Height: =Parent.Height
+                  Items: |-
+                    =Sort(
+                        Filter(
+                            Equipment_Bookings As bk,
+                            IsBlank(varBookingDevice)
+                                || bk.Title = varBookingDevice,
+                            IsEmpty(colGroupFilter)
+                                || LookUp(Equipment_Assets, Titel = bk.Title).OwnerGroup.Value
+                                    in colGroupFilter.Value
+                                || LookUp(Equipment_Assets, Titel = bk.Title).UserGroup.Value
+                                    in colGroupFilter.Value,
+                            drpBookingFilter.Selected.Value = "All"
+                                || (drpBookingFilter.Selected.Value = "Current and upcoming" && bk.EndDate >= Today())
+                                || (drpBookingFilter.Selected.Value = "My bookings only"
+                                    && bk.ReservedBy.Email = User().Email)
+                        ),
+                        StartDate,
+                        SortOrder.Ascending
+                    )
+                  LayoutMinHeight: =16
+                  LayoutMinWidth: =16
+                  TemplateSize: =If(Parent.Width < 600, 104, 68)
+                  Visible: =varBookingView = "list"
+                  Width: =Parent.Width - 16
+                Children:
+                  - lblBkLine1:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(50, 49, 48, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =FontWeight.Semibold
+                        Height: =If(Parent.TemplateWidth < 600, 38, 24)
+                        OnSelect: |-
+                          =Set(varCurrentBooking, ThisItem);
+                          Navigate(scr_BookingDetail, ScreenTransition.Fade)
+                        PaddingBottom: =0
+                        PaddingLeft: =8
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Text: |-
+                          =With(
+                              { a: LookUp(Equipment_Assets, Titel = ThisItem.Title) },
+                              Coalesce(a.DeviceName, ThisItem.Title, "?")
+                                  & "   (" & Coalesce(ThisItem.Title, "?") & ")"
+                                  & If(IsBlank(ThisItem.LinkedSetupID), "", "   setup " & ThisItem.LinkedSetupID)
+                          )
+                        Width: =Parent.TemplateWidth - If(Parent.TemplateWidth < 600, 24, 140)
+                        X: =8
+                        Y: =8
+                  - lblBkLine2:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(96, 94, 92, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =If(ThisItem.IsSelected, FontWeight.Semibold, FontWeight.Normal)
+                        Height: =If(Parent.TemplateWidth < 600, 40, 22)
+                        OnSelect: |-
+                          =Set(varCurrentBooking, ThisItem);
+                          Navigate(scr_BookingDetail, ScreenTransition.Fade)
+                        PaddingBottom: =0
+                        PaddingLeft: =8
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =11
+                        Text: |-
+                          =With(
+                              { a: LookUp(Equipment_Assets, Titel = ThisItem.Title) },
+                              Text(ThisItem.StartDate, DateTimeFormat.ShortDate) & " - " &
+                              Text(ThisItem.EndDate, DateTimeFormat.ShortDate) &
+                              "   |   " & Coalesce(ThisItem.ReservedBy.DisplayName, "?") &
+                              If(IsBlank(a.OwnerGroup.Value), "", "   |   " & a.OwnerGroup.Value) &
+                              If(IsBlank(a.'CurrentLocation (CurrentLocation0)'.Value), "", "   |   " & a.'CurrentLocation (CurrentLocation0)'.Value) &
+                              If(IsBlank(ThisItem.ProjectCode), "", "   |   " & ThisItem.ProjectCode)
+                          )
+                        VerticalAlign: =VerticalAlign.Top
+                        Width: =lblBkLine1.Width
+                        X: =8
+                        Y: =lblBkLine1.Y + lblBkLine1.Height
+                  - lblBkStatusBadge:
+                      Control: Label@2.5.1
+                      Properties:
+                        Align: =Align.Center
+                        BorderColor: =RGBA(0, 0, 0, 1)
+                        Color: =RGBA(255, 255, 255, 1)
+                        DisabledColor: =RGBA(161, 159, 157, 1)
+                        Fill: =RGBA(96, 94, 92, 1)
+                        Font: =Font.'Segoe UI'
+                        FontWeight: =If(ThisItem.IsSelected, FontWeight.Semibold, FontWeight.Normal)
+                        Height: =24
+                        OnSelect: |-
+                          =Set(varCurrentBooking, ThisItem);
+                          Navigate(scr_BookingDetail, ScreenTransition.Fade)
+                        PaddingBottom: =0
+                        PaddingLeft: =12
+                        PaddingRight: =0
+                        PaddingTop: =0
+                        Size: =10
+                        Text: =Coalesce(ThisItem.BookingStatus.Value, "")
+                        Visible: =Parent.TemplateWidth >= 600 && !IsBlank(ThisItem.BookingStatus.Value)
+                        Width: =110
+                        Wrap: =false
+                        X: =Parent.TemplateWidth - Self.Width - 16
+                        Y: =(Parent.TemplateHeight / 2) - (Self.Height / 2)
+                  - recBkSep:
+                      Control: Rectangle@2.3.0
+                      Properties:
+                        BorderColor: =RGBA(0, 0, 0, 0)
+                        Fill: =RGBA(240, 240, 240, 1)
+                        Height: =1
+                        OnSelect: |-
+                          =Set(varCurrentBooking, ThisItem);
+                          Navigate(scr_BookingDetail, ScreenTransition.Fade)
+                        Visible: =ThisItem.IsSelected
+                        Width: =Parent.TemplateWidth
+                        Y: =Parent.TemplateHeight - 1
